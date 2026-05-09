@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../investigation/investigation_screen.dart';
+import '../screens/investigation/investigation_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

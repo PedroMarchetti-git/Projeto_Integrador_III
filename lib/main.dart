@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
-import 'screens/home/home_screen.dart';
-
+import 'package:projeto_integrador_iii/home/home_screen.dart';
 void main() {
   runApp(const MysteryGameApp());
 }
