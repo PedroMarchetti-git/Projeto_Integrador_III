@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/investigation/investigation_screen.dart';
+import '../screens/investigation/ambientes_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -20,11 +20,11 @@ class HomeScreen extends StatelessWidget {
           children: [
 
             const Icon(
-              Icons.search,
+              Icons.flashlight_on,
               size: 100,
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
 
             const Text(
               "RPG Investigativo",
@@ -42,18 +42,9 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const InvestigationScreen(),
+                    builder: (_) => const AmbientesScreen(),
                   ),
                 );
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            ElevatedButton(
-              child: const Text("Sair"),
-              onPressed: () {
-                Navigator.pop(context);
               },
             ),
           ],

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../models/environment.dart';
+import '../models/ambiente.dart';
 
-class EnvironmentCard extends StatelessWidget {
+class AmbienteCard extends StatelessWidget {
 
-  final Environment environment;
+  final Ambiente ambiente;
   final VoidCallback onTap;
 
-  const EnvironmentCard({
+  const AmbienteCard({
     super.key,
-    required this.environment,
+    required this.ambiente,
     required this.onTap,
   });
 
@@ -16,15 +16,10 @@ class EnvironmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Card(
-
       child: ListTile(
-
-        title: Text(environment.name),
-
-        subtitle: Text(environment.description),
-
+        title: Text(ambiente.nome),
+        subtitle: Text(ambiente.descricao),
         trailing: const Icon(Icons.arrow_forward),
-
         onTap: onTap,
       ),
     );
