@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/ambientes_mock.dart';
 import '../../widgets/ambiente_card.dart';
-import 'caab_screens.dart'; // Importa a tela do CAAB
+import 'caab_screens.dart'; // Certifique-se que o nome do arquivo termina com 's' como no seu sistema
 
 class AmbientesScreen extends StatelessWidget {
   const AmbientesScreen({super.key});

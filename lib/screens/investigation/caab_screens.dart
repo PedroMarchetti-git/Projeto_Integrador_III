@@ -174,7 +174,7 @@ class _CaabScreenState extends State<CaabScreen> {
     });
   }
 
-   List<String> _getAvailableActions(dynamic gameState){ // Retorna uma lista de ações disponíveis para o jogador no ambiente do CAAB, com base no estado atual do jogo, como quais interações já foram feitas e quais tokens o jogador possui, permitindo que a interface exiba as opções corretas para o jogador.
+   List<String> _getAvailableActions(GameState gameState){ // Alterado de dynamic para GameState
     List<String> actions = []; // Lista de ações disponíveis, que será preenchida com base no estado atual do jogo, como quais interações já foram feitas e quais tokens o jogador possui.
     if (!gameState.isInteractionDone('caab_bookshelf')) { // Controla se o jogador já procurou a estante de livros, para evitar mostrar a mesma pista repetidamente. Se ainda não procurou, adiciona a ação de procurar na estante de livros à lista de ações disponíveis.
       actions.add("Procurar na estante de livros"); // Adiciona a ação de procurar na estante de livros à lista de ações disponíveis, permitindo que o jogador interaja com esse elemento do ambiente para obter pistas ou informações.

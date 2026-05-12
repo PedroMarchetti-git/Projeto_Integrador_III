@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
-import 'home/home_screen.dart';
-import 'screens/auth/auth_screen.dart'; // Importa a nova tela de login
+import 'screens/investigation/auth_screen.dart'; // Caminho corrigido
+import 'screens/models/game_state.dart'; // Import do estado global
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; // Arquivo gerado pelo FlutterFire
 
@@ -14,7 +15,12 @@ void main() async {
   } catch (e) {
     debugPrint('Erro ao inicializar Firebase: $e');
   }
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => GameState(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
