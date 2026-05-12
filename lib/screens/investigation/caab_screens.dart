@@ -26,7 +26,6 @@ class _CaabScreenState extends State<CaabScreen> {
   void _initializeLocation() {
     final gameState = Provider.of<GameState>(context, listen: false);
     gameState.visitLocation('caab');
-
     setState(() {
       currentDialogue = _getInitialDescription();
     });
@@ -162,9 +161,6 @@ class _CaabScreenState extends State<CaabScreen> {
           currentDialogue = "Seu inventário está vazio.";
           break;
         case "Ir para a Biblioteca":
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(builder: (context) => BibliotecaScreen()),
-          // );
           currentDialogue = "A Biblioteca ainda não está disponível.";
           break;
         default:

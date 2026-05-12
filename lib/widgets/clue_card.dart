@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
+ 
 class ClueCard extends StatelessWidget {
   final String clue;
-
+ 
   const ClueCard({super.key, required this.clue});
-
+ 
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -20,3 +20,4 @@ class ClueCard extends StatelessWidget {
     );
   }
 }
+ 

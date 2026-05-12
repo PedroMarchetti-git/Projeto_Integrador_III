@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/ambientes_mock.dart';
 import '../../widgets/ambiente_card.dart';
 import 'caab_screens.dart';
+import '../../models/ambiente.dart'; // Importa o modelo Ambiente
 
 class AmbientesScreen extends StatelessWidget {
   const AmbientesScreen({super.key});
@@ -26,9 +27,9 @@ class AmbientesScreen extends StatelessWidget {
     );
   }
 
-  void _navegarParaAmbiente(BuildContext context, ambiente) {
+  void _navegarParaAmbiente(BuildContext context, Ambiente ambiente) { // Adicionado tipo Ambiente
     switch (ambiente.nome) {
-      case 'CAAB':
+      case "Centro de Estudos Africanos e Afro-Brasileiros": // Corrigido para o nome completo
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => CaabScreen()),
         );
