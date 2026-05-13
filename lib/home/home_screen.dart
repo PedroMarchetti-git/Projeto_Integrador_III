@@ -10,7 +10,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text("Mistério do Apagão"),
+        title: const Text("Quem Apagou as Luzes?"),
       ),
 
       body: Center(
