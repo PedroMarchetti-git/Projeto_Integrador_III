@@ -6,8 +6,9 @@ import '../../widgets/clue_card.dart';
 // import 'biblioteca_screen.dart'; // descomente quando criar essa tela
 
 class CaabScreen extends StatefulWidget {
+  const CaabScreen({super.key});
   @override
-  _CaabScreenState createState() => _CaabScreenState();
+  State<CaabScreen> createState() => _CaabScreenState();
 }
 
 class _CaabScreenState extends State<CaabScreen> {

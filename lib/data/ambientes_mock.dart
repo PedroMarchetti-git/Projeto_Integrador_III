@@ -1,6 +1,6 @@
 import '../models/ambiente.dart';
 
-const List<Ambiente> ambientes = [
+final List<Ambiente> ambientes = [
 
   Ambiente(
     id: "1",

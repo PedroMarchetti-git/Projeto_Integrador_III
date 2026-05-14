@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../data/ambientes_mock.dart';
 import '../../widgets/ambiente_card.dart';
 import 'caab_screens.dart';
-import 'package:geolocator/geolocator.dart';
 
 class AmbientesScreen extends StatelessWidget {
   const AmbientesScreen({super.key});

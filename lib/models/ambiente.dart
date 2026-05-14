@@ -6,9 +6,9 @@ class Ambiente {
   final double latitude;
   final double longitude;
   final double raioMetros;
-  final bool desbloqueado;
+  bool desbloqueado;
 
-  const Ambiente({
+  Ambiente({
     required this.id,
     required this.nome,
     required this.descricao,
