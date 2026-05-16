@@ -48,7 +48,8 @@ class GameState extends ChangeNotifier {
 
   GameState() {
     _listaDeAmbientes = ambientes; // Carrega os ambientes do mock
-    _iniciarMonitoramentoGPS();
+    //_iniciarMonitoramentoGPS();
+    _listaDeAmbientes.first.desbloqueado = true;
   }
 
   Ambiente? get ambienteAtual {
@@ -75,14 +76,7 @@ class GameState extends ChangeNotifier {
   }
 
   bool estaNoRaioDoAmbiente(){
-    if (_posicaoAtual == null || ambienteAtual == null) return false;
-    double distancia = Geolocator.distanceBetween(
-      _posicaoAtual!.latitude,
-      _posicaoAtual!.longitude,
-      ambienteAtual!.latitude,
-      ambienteAtual!.longitude,
-    );
-    return distancia <= ambienteAtual!.raioMetros;
+    return true;
   }
 
   void desbloquearAmbiente(){
