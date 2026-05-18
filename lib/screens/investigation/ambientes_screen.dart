@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/ambientes_mock.dart';
 import '../../widgets/ambiente_card.dart';
 import 'caab_screens.dart';
+import 'auditorio_screen.dart';
 
 class AmbientesScreen extends StatelessWidget {
   const AmbientesScreen({super.key});
@@ -27,12 +28,20 @@ class AmbientesScreen extends StatelessWidget {
   }
 
   void _navegarParaAmbiente(BuildContext context, ambiente) {
-    switch (ambiente.nome) {
-      case 'CAAB':
+    switch (ambiente.id) {
+
+      case '1':
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => CaabScreen()),
+          MaterialPageRoute(builder: (_) => const AuditorioScreen()),
         );
         break;
+
+      case '4':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const CaabScreen()),
+        );
+        break;
+
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Entrando no ${ambiente.nome}")),
