@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/investigation/auth_screen.dart'; // Caminho corrigido
-import 'screens/models/game_state.dart'; // Import do estado global
+import 'models/game_state.dart'; // Import do estado global
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; // Arquivo gerado pelo FlutterFire
 
