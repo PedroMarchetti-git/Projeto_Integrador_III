@@ -14,52 +14,18 @@ class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLogin = true;
   bool _isLoading = false;
-
+  
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  // Documentação: Método para destruir os controladores e liberar memória
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  void _showError(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red.shade700,
-        duration: const Duration(seconds: 5),
-      ),
-    );
-  }
-
-  String _mapAuthError(FirebaseAuthException e) {
-    switch (e.code) {
-      case 'user-not-found':
-        return 'Nenhum usuário encontrado com esse e-mail.';
-      case 'wrong-password':
-      case 'invalid-credential':
-        return 'E-mail ou senha incorretos.';
-      case 'invalid-email':
-        return 'E-mail inválido.';
-      case 'email-already-in-use':
-        return 'Este e-mail já está cadastrado. Faça login.';
-      case 'weak-password':
-        return 'Senha muito fraca (mínimo 6 caracteres).';
-      case 'operation-not-allowed':
-        return 'Login por e-mail/senha está desabilitado no Firebase Console.';
-      case 'network-request-failed':
-        return 'Sem conexão com o servidor. Verifique sua internet.';
-      case 'too-many-requests':
-        return 'Muitas tentativas. Tente novamente mais tarde.';
-      default:
-        return 'Erro de autenticação: ${e.code} - ${e.message}';
-    }
   }
 
   Future<void> _submitForm() async {
@@ -74,45 +40,33 @@ class _AuthScreenState extends State<AuthScreen> {
           password: _passwordController.text.trim(),
         );
       } else {
-        final UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
 
-        try {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userCredential.user!.uid)
-              .set({
-            'uid': userCredential.user!.uid,
-            'nome': _nameController.text.trim(),
-            'email': _emailController.text.trim(),
-            'createdAt': FieldValue.serverTimestamp(),
-          });
-        } on FirebaseException catch (e) {
-          debugPrint('Erro ao gravar no Firestore: ${e.code} - ${e.message}');
-          _showError(
-            'Conta criada, mas falhou ao salvar perfil: ${e.code}. '
-            'Verifique as regras do Firestore.',
-          );
-        }
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'uid': userCredential.user!.uid,
+          'nome': _nameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'createdAt': FieldValue.serverTimestamp(),
+        });
       }
 
+      // Verificação de segurança para navegar
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {
-      debugPrint('FirebaseAuthException: ${e.code} - ${e.message}');
-      _showError(_mapAuthError(e));
-    } on FirebaseException catch (e) {
-      debugPrint('FirebaseException: ${e.code} - ${e.message}');
-      _showError('Erro Firebase: ${e.code} - ${e.message}');
-    } catch (e, st) {
-      debugPrint('Erro inesperado: $e\n$st');
-      _showError('Erro inesperado: $e');
+      String message = e.message ?? 'Erro ao autenticar.';
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -140,6 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
+                
                 if (!_isLogin) ...[
                   TextFormField(
                     controller: _nameController,

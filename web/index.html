@@ -31,6 +31,9 @@
 
   <title>pi_iii_rpg</title>
   <link rel="manifest" href="manifest.json">
+
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
   <!--
@@ -44,3 +47,17 @@
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
+<script>
+  window.addEventListener('load', function(ev) {
+    // Documentação: Força o uso do renderer HTML para garantir compatibilidade de ícones
+    _flutter.loader.loadEntrypoint({
+      onEntrypointLoaded: function(engineInitializer) {
+        engineInitializer.initializeEngine({
+          renderer: "html", 
+        }).then(function(appRunner) {
+          appRunner.runApp();
+        });
+      }
+    });
+  });
+</script>

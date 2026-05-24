@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/investigation/auth_screen.dart';
-import 'models/game_state.dart';
-import 'firebase_options.dart';
+import 'models/game_state.dart'; // Import do estado global
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
