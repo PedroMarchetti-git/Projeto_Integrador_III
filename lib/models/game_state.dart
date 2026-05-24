@@ -43,7 +43,7 @@ class GameState extends ChangeNotifier {
   bool hasVisited(String location) => _visitedLocations.contains(location);
 
   late List<Ambiente> _listaDeAmbientes;
-  Position? _posicaoAtual;
+  Position? posicaoAtual;
   StreamSubscription<Position>? _gpsSubscription;
 
   GameState() {
@@ -60,7 +60,7 @@ class GameState extends ChangeNotifier {
     }
   }
 
-  void _iniciarMonitoramentoGPS() async {
+  void iniciarMonitoramentoGPS() async {
     LocationPermission permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) return;
 
@@ -70,7 +70,7 @@ class GameState extends ChangeNotifier {
         distanceFilter: 2, 
       ),
     ).listen((Position position) {
-      _posicaoAtual = position;
+      posicaoAtual = position;
       notifyListeners();
     });
   }

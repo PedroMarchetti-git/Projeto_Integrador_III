@@ -34,64 +34,110 @@ class _CaabScreenState extends State<CaabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final gameState = context.watch<GameState>();
+    // DECLARAÇÃO DA VARIÁVEL (Isso corrige o erro da linha 38)
+    final gameState = Provider.of<GameState>(context);
     final availableActions = _getAvailableActions(gameState);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('CAAB'),
+        backgroundColor: Colors.black87,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              currentDialogue,
-              style: const TextStyle(fontSize: 16.0),
+      body: Stack(
+        children: [
+          //Imagem de fundo com o caminho correto do seu projeto
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/caab.jpeg', 
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Ações Disponíveis:',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+          // Camada escura para dar contraste ao texto do jogo
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withValues(alpha: 0.65), 
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: availableActions.length,
-                itemBuilder: (context, index) {
-                  final action = availableActions[index];
-                  return ChoiceButton(
-                    text: action,
-                    onPressed: () => _handleAction(action),
-                  );
-                },
-              ),
-            ),
-            if (gameState.allClues.isNotEmpty) ...[
-              const SizedBox(height: 20),
-              const Text(
-                'Pistas:',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              ...gameState.allClues.map((clue) => TweenAnimationBuilder<double>(
-                    key: ValueKey(clue),
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 600),
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.translate(
-                          offset: Offset(0, 20 * (1 - value)),
-                          child: child,
-                        ),
+          ),
+          
+          // 2. Interface do jogo por cima do fundo
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black38,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    currentDialogue,
+                    style: const TextStyle(fontSize: 16.0, color: Colors.white, height: 1.4),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Ações Disponíveis:',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: availableActions.length,
+                    itemBuilder: (context, index) {
+                      final action = availableActions[index];
+                      return ChoiceButton(
+                        text: action,
+                        onPressed: () => _handleAction(action),
                       );
                     },
-                    child: ClueCard(clue: clue),
-                  )),
-            ],
-          ],
-        ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ChoiceButton(
+                        text: "Voltar",
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ChoiceButton(
+                        text: "Próximo",
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+                if (gameState.allClues.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Pistas:',
+                    style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  ...gameState.allClues.map((clue) => TweenAnimationBuilder<double>(
+                        key: ValueKey(clue),
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        duration: const Duration(milliseconds: 600),
+                        builder: (context, value, child) {
+                          return Opacity(
+                            opacity: value,
+                            child: Transform.translate(
+                              offset: Offset(0, 20 * (1 - value)),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: ClueCard(clue: clue),
+                      )),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -106,9 +152,7 @@ class _CaabScreenState extends State<CaabScreen> {
   }
 
   void _showClueDiscoveryFeedback(String clue) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
+    var row = Row(
           children: [
             const Icon(Icons.auto_awesome, color: Colors.amber),
             const SizedBox(width: 12),
@@ -116,11 +160,15 @@ class _CaabScreenState extends State<CaabScreen> {
               child: Text(
                 'Nova Pista: $clue',
                 style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+                    color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 16,
               ),
             ),
+            )
           ],
-        ),
+        );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: row,
         backgroundColor: Colors.indigo.shade800,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

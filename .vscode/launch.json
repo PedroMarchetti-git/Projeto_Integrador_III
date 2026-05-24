@@ -4,11 +4,7 @@
     {
       "name": "Projeto Integrador III (Web HTML)",
       "request": "launch",
-      "type": "dart",
-      "args": [
-        "--web-renderer",
-        "html"
-      ]
+      "type": "dart"
     }
   ]
 }

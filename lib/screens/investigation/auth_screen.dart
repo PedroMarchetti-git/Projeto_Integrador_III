@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../home/home_screen.dart';
+import '../../firestore_service.dart';
+
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -15,8 +17,8 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin = true;
   bool _isLoading = false;
   
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  late final TextEditingController _nameController = TextEditingController();
+  late final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   // Documentação: Método para destruir os controladores e liberar memória
@@ -28,35 +30,44 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
-  Future<void> _submitForm() async {
+    Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
+      UserCredential userCredential;
       if (_isLogin) {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
       } else {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
 
+        final String uid = userCredential.user!.uid;
+        final String nome = _nameController.text.trim();
+
+        // 1. Salva no Cloud Firestore utilizando a instância direta
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(userCredential.user!.uid)
+            .doc(uid)
             .set({
-          'uid': userCredential.user!.uid,
-          'nome': _nameController.text.trim(),
-          'email': _emailController.text.trim(),
-          'createdAt': FieldValue.serverTimestamp(),
-        });
+              'uid': uid,
+              'nome': nome,
+              'email': _emailController.text.trim(),
+              'senha': _passwordController.text.trim(),
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+
+        // 2. Salva a sessão em tempo real no Realtime Database via serviço
+        await FirestoreService().vincularSessaoRealtime(uid, nome);
       }
 
-      // Verificação de segurança para navegar
+      // Se o login ou o cadastro com os bancos funcionou, navega para a Home
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -65,7 +76,17 @@ class _AuthScreenState extends State<AuthScreen> {
     } on FirebaseAuthException catch (e) {
       String message = e.message ?? 'Erro ao autenticar.';
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    } catch (e) {
+      // Captura erros de banco de dados e evita o travamento do app
+      print("⚠️ Erro na operação com banco de dados: $e");
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -84,8 +105,12 @@ class _AuthScreenState extends State<AuthScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(Icons.flashlight_on_rounded,
-                    size: 80, color: Theme.of(context).primaryColor),
+                Image.asset(
+                  'assets/images/icone_apagao.jpeg', //icone do jogo
+                  height: 120,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 80),
+                ),
                 const SizedBox(height: 16),
                 Text(
                   _isLogin ? 'Entrar no Mistério' : 'Criar Nova Conta',
@@ -145,7 +170,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2))
-                      : Text(_isLogin ? 'ENTRAR' : 'CADASTRAR'),
+                      : Text(_isLogin ? 'INICIAR' : 'CADASTRAR'),
                 ),
                 TextButton(
                   onPressed: _isLoading

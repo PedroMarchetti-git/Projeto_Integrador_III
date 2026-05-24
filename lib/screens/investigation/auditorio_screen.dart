@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/game_state.dart';
 import '../../widgets/choice_button.dart';
-import '../../widgets/clue_card.dart';
+//import '../../widgets/clue_card.dart';
 
 class AuditorioScreen extends StatefulWidget {
   const AuditorioScreen({super.key});
@@ -80,13 +80,33 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
                       itemCount: actions.length,
                       itemBuilder: (_, index) {
                         final action = actions[index];
-
-                        return ElevatedButton(
+                        return ChoiceButton(
+                          text: action,
                           onPressed: () => _handleAction(action),
-                          child: Text(action),
                         );
                       },
                     ),
+                  ),
+
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ChoiceButton(
+                          text: "Voltar",
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ChoiceButton(
+                          text: "Próximo",
+                          onPressed: () {
+                            // Lógica para avançar na história ou diálogo
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
