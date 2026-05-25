@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/game_state.dart';
 import 'caab_screens.dart';
+import 'auditorio_screen.dart';
 import 'biblioteca_screen.dart';
-
+import 'praca_alimentacao_screen.dart';
 
 class AmbientesScreen extends StatelessWidget {
   const AmbientesScreen({super.key});
