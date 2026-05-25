@@ -2,22 +2,40 @@ import 'package:flutter/material.dart';
  
 class ClueCard extends StatelessWidget {
   final String clue;
- 
-  const ClueCard({super.key, required this.clue});
- 
+
+  const ClueCard({
+    super.key,
+    required this.clue,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.indigo.shade50,
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      color: Colors.black.withOpacity(0.85),
+
+      margin: const EdgeInsets.symmetric(vertical: 6),
+
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+
       child: ListTile(
-        leading: const Icon(Icons.auto_awesome, color: Colors.indigo),
+
+        leading: const Icon(
+          Icons.auto_awesome,
+          color: Colors.amber,
+        ),
+
         title: Text(
           clue,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
   }
 }
- 
