@@ -3,6 +3,7 @@ import '../../data/ambientes_mock.dart';
 import '../../widgets/ambiente_card.dart';
 import 'caab_screens.dart';
 import 'auditorio_screen.dart';
+import 'manacas_screen.dart';
 
 class AmbientesScreen extends StatelessWidget {
   const AmbientesScreen({super.key});
@@ -39,6 +40,12 @@ class AmbientesScreen extends StatelessWidget {
       case '4':
         Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const CaabScreen()),
+        );
+        break;
+
+      case '5': // Substitua o '5' pelo ID exato do Manacás no seu ambientes_mock.dart
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => TelaAcusacaoManacas()),
         );
         break;
 
