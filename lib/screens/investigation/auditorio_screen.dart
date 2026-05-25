@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/game_state.dart';
 import '../../widgets/choice_button.dart';
-import '../../widgets/clue_card.dart';
 
 class AuditorioScreen extends StatefulWidget {
   const AuditorioScreen({super.key});
@@ -41,7 +40,6 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
       appBar: AppBar(title: const Text("Auditório")),
       body: Stack(
         children: [
-
           // FUNDO
           Positioned.fill(
             child: Image.asset(
@@ -56,7 +54,6 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-
                   // TEXTO SEM FUNDO PRETO
                   Text(
                     currentDialogue,
@@ -88,6 +85,22 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
                       },
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  // BOTÃO DE TESTE 
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20)
+                    ),
+                    onPressed: () {
+                      // 1. Avisa o GameState que esta sala foi concluída!
+                      context.read<GameState>().desbloquearAmbiente();
+                      
+                      // 2. Volta para a lista de ambientes
+                      Navigator.pop(context); 
+                    },
+                    child: const Text("Finalizar Investigação desta Sala", style: TextStyle(color: Colors.white)),
+                  ),
                 ],
               ),
             ),
@@ -103,7 +116,6 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
         "O palco permanece parcialmente iluminado e o painel elétrico está aberto. "
         "Aqui começou toda a confusão.";
   }
-
 
   List<String> _getAvailableActions(GameState gameState) {
     List<String> actions = [];
@@ -138,14 +150,11 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
     );
   }
 
-
   void _handleAction(String action) {
     final gameState = Provider.of<GameState>(context, listen: false);
 
     setState(() {
       switch (action) {
-
-        // ---------- PAINEL ----------
         case "Inspecionar painel elétrico":
           currentDialogue =
               "O painel apresenta sinais claros de manipulação manual recente.";
