@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/game_state.dart';
 import 'caab_screens.dart';
-import 'auditorio_screen.dart';
 import 'biblioteca_screen.dart';
 
 
@@ -73,19 +72,9 @@ class AmbientesScreen extends StatelessWidget {
     );
   }
 
-  // Sua função de navegação está perfeita, não mexemos em nada!
   void _navegarParaAmbiente(BuildContext context, ambiente) {
-    switch (ambiente.id) {
-      case '1':
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const AuditorioScreen()),
-        );
-        break;
-      case '2':
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const BibliotecaScreen()),
-        ); 
-      case '4':
+    switch (ambiente.nome) {
+      case 'CAAB':
         Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const CaabScreen()),
         );

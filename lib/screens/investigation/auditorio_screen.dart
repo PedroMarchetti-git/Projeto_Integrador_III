@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/game_state.dart';
 import '../../widgets/choice_button.dart';
-import '../../widgets/clue_card.dart';
 
 class AuditorioScreen extends StatefulWidget {
   const AuditorioScreen({super.key});
