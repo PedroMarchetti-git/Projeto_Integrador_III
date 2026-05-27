@@ -9,6 +9,7 @@ final List<Ambiente> ambientes = [
     latitude: -22.833215,
     longitude: -47.053100,
     raioMetros: 10,
+    desbloqueado: false,
   ),
 
   Ambiente(
@@ -18,6 +19,7 @@ final List<Ambiente> ambientes = [
     latitude: -22.833810,
     longitude: -47.051927,
     raioMetros: 10,
+    desbloqueado: false,
   ),
 
   Ambiente(
@@ -27,6 +29,7 @@ final List<Ambiente> ambientes = [
     latitude: -22.833050,
     longitude:  -47.052015,
     raioMetros: 10,
+    desbloqueado: false,
   ),
 
   Ambiente(
@@ -36,6 +39,7 @@ final List<Ambiente> ambientes = [
     latitude:  -22.833656,
     longitude: -47.052039,
     raioMetros: 10,
+    desbloqueado: false,
   ),
 
   Ambiente(
@@ -45,5 +49,6 @@ final List<Ambiente> ambientes = [
     latitude: -22.833400,
     longitude: -47.052500,
     raioMetros: 10,
+    desbloqueado: false,
   )
 ];

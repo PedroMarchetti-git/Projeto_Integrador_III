@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../models/game_state.dart';
-import '../../widgets/clue_card.dart';
 import '../../widgets/choice_button.dart';
-import 'minigames/electrical_puzzle_dialog.dart';
 
 class AuditorioScreen extends StatefulWidget {
   const AuditorioScreen({super.key});
@@ -19,7 +16,6 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeLocation();
     });
@@ -41,12 +37,9 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
     final actions = _getAvailableActions(gameState);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Auditório"),
-      ),
+      appBar: AppBar(title: const Text("Auditório")),
       body: Stack(
         children: [
-
           // FUNDO
           Positioned.fill(
             child: Image.asset(
@@ -60,101 +53,54 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  // TEXTO PRINCIPAL
+                  // TEXTO SEM FUNDO PRETO
                   Text(
                     currentDialogue,
-
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      height: 1.5,
-
                       shadows: [
                         Shadow(
                           blurRadius: 8,
                           color: Colors.black,
                           offset: Offset(2, 2),
-                        ),
+                        )
                       ],
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  const Text(
-                    "Ações Disponíveis:",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // AÇÕES
                   Expanded(
-                    flex: 2,
                     child: ListView.builder(
                       itemCount: actions.length,
                       itemBuilder: (_, index) {
                         final action = actions[index];
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: ChoiceButton(
-                            text: action,
-                            onPressed: () => _handleAction(action),
-                          ),
+                        return ElevatedButton(
+                          onPressed: () => _handleAction(action),
+                          child: Text(action),
                         );
                       },
                     ),
                   ),
-
-                  // PISTAS
-                  if (gameState.allClues.isNotEmpty) ...[
-                    const SizedBox(height: 10),
-
-                    const Text(
-                      "Pistas Descobertas:",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  const SizedBox(height: 10),
+                  // BOTÃO DE TESTE 
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20)
                     ),
-
-                    const SizedBox(height: 10),
-
-                    Expanded(
-                      flex: 1,
-                      child: ListView(
-                        children: gameState.allClues.map((clue) {
-                          return TweenAnimationBuilder<double>(
-                            key: ValueKey(clue),
-                            tween: Tween(begin: 0.0, end: 1.0),
-                            duration: const Duration(milliseconds: 500),
-
-                            builder: (context, value, child) {
-                              return Opacity(
-                                opacity: value,
-                                child: Transform.translate(
-                                  offset: Offset(0, 20 * (1 - value)),
-                                  child: child,
-                                ),
-                              );
-                            },
-
-                            child: ClueCard(clue: clue),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
+                    onPressed: () {
+                      // 1. Avisa o GameState que esta sala foi concluída!
+                      context.read<GameState>().desbloquearAmbiente();
+                      
+                      // 2. Volta para a lista de ambientes
+                      Navigator.pop(context); 
+                    },
+                    child: const Text("Finalizar Investigação desta Sala", style: TextStyle(color: Colors.white)),
+                  ),
                 ],
               ),
             ),
@@ -164,19 +110,12 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
     );
   }
 
-  // =========================================================
-  // DESCRIÇÃO INICIAL
-  // =========================================================
-
   String _getInitialDescription() {
-    return "Você entra no auditório onde ocorreu o apagão durante o evento acadêmico.\n\n"
-        "As cadeiras estão desalinhadas, cabos estão espalhados pelo palco e parte do sistema ainda pisca intermitentemente.\n\n"
-        "Algo naquele caos parece ter sido planejado.";
+    return "Você entra no auditório onde o evento acadêmico ocorreu. "
+        "Cadeiras desalinhadas indicam o pânico causado pelo apagão. "
+        "O palco permanece parcialmente iluminado e o painel elétrico está aberto. "
+        "Aqui começou toda a confusão.";
   }
-
-  // =========================================================
-  // AÇÕES DISPONÍVEIS
-  // =========================================================
 
   List<String> _getAvailableActions(GameState gameState) {
     List<String> actions = [];
@@ -190,200 +129,109 @@ class _AuditorioScreenState extends State<AuditorioScreen> {
     }
 
     if (!gameState.isInteractionDone('auditorio_palco')) {
-      actions.add("Examinar palco");
+      actions.add("Examinar o palco");
     }
 
-    if (!gameState.isInteractionDone('auditorio_puzzle')) {
-      actions.add("Reconstruir sistema elétrico");
-    }
-
-    actions.add("Conversar com Rafael");
-    actions.add("Conversar com Coordenador");
+    actions.add("Conversar com Rafael (Técnico de Som)");
+    actions.add("Conversar com Coordenador de Eventos");
     actions.add("Conversar com Técnico de TI");
+    actions.add("Procurar por pistas");
+    actions.add("Verificar Inventário");
 
     return actions;
   }
 
-  // =========================================================
-  // FEEDBACK DE PISTA
-  // =========================================================
-
   void _showClueFeedback(String clue) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      backgroundColor: Colors.white,
-
-      behavior: SnackBarBehavior.floating,
-
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Nova pista descoberta: $clue"),
+        duration: const Duration(seconds: 3),
       ),
-
-      duration: const Duration(seconds: 3),
-
-      content: Row(
-        children: [
-
-          const Icon(
-            Icons.search,
-            color: Colors.amber,
-          ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Text(
-              "Nova pista descoberta: $clue",
-
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-  // =========================================================
-  // AÇÕES
-  // =========================================================
+    );
+  }
 
   void _handleAction(String action) {
-    final gameState = Provider.of<GameState>(
-      context,
-      listen: false,
-    );
+    final gameState = Provider.of<GameState>(context, listen: false);
 
     setState(() {
       switch (action) {
-
-        // PAINEL
         case "Inspecionar painel elétrico":
           currentDialogue =
-              "Os disjuntores apresentam sinais claros de manipulação manual.\n\n"
-              "Alguém mexeu aqui pouco antes do apagão.";
-
+              "O painel apresenta sinais claros de manipulação manual recente.";
           gameState.completeInteraction('auditorio_painel');
 
-          if (gameState.addClue(
-              "Painel elétrico manipulado")) {
-            _showClueFeedback(
-                "Painel elétrico manipulado");
+          if (gameState.addClue("Painel elétrico manipulado")) {
+            _showClueFeedback("Painel elétrico manipulado");
           }
-
           break;
 
-        // CAMERAS
         case "Analisar câmeras de segurança":
           currentDialogue =
-              "As gravações falham exatamente durante o apagão.\n\n"
-              "Pouco antes da interrupção, uma pessoa aparece próxima ao sistema.";
+              "As câmeras mostram uma pessoa próxima ao sistema segundos antes do apagão.";
+          gameState.completeInteraction('auditorio_cameras');
 
-          gameState.completeInteraction(
-              'auditorio_cameras');
-
-          if (gameState.addClue(
-              "Falha proposital nas câmeras")) {
+          if (gameState.addClue("Pessoa próxima ao sistema durante apagão")) {
             _showClueFeedback(
-                "Falha proposital nas câmeras");
+                "Pessoa próxima ao sistema durante apagão");
+          }
+          break;
+
+        case "Examinar o palco":
+          currentDialogue =
+              "Cabos foram desconectados manualmente. O apagão pode ter sido proposital.";
+          gameState.completeInteraction('auditorio_palco');
+
+          if (gameState.addClue("Sabotagem no sistema de luz")) {
+            _showClueFeedback("Sabotagem no sistema de luz");
           }
 
+          _checkUnlockBiblioteca(gameState);
           break;
 
-        // PALCO
-        case "Examinar palco":
+        case "Conversar com Rafael (Técnico de Som)":
           currentDialogue =
-              "Cabos foram desconectados manualmente atrás do palco.\n\n"
-              "Somente alguém com conhecimento técnico conseguiria fazer isso rapidamente.";
-
-          gameState.completeInteraction(
-              'auditorio_palco');
-
-          if (gameState.addClue(
-              "Sabotagem técnica no palco")) {
-            _showClueFeedback(
-                "Sabotagem técnica no palco");
-          }
-
+              "Rafael parece nervoso.\n\n"
+              "'O sistema estava normal. Isso não foi falha elétrica comum.'";
           break;
 
-        // PUZZLE
-        case "Reconstruir sistema elétrico":
-          _openPuzzle();
-          break;
-
-        // RAFAEL
-        case "Conversar com Rafael":
+        case "Conversar com Coordenador de Eventos":
           currentDialogue =
-              "Rafael parece desconfiado.\n\n"
-              "'O sistema estava funcionando normalmente antes do evento começar.'\n\n"
-              "'Isso não foi um simples problema elétrico.'";
-
+              "O coordenador evita contato visual.\n\n"
+              "'O importante é não criar pânico. Deve ter sido só um problema técnico.'";
           break;
 
-        // COORDENADOR
-        case "Conversar com Coordenador":
-          currentDialogue =
-              "O coordenador ajeita os óculos repetidamente.\n\n"
-              "'Precisamos evitar pânico.'\n\n"
-              "'O importante agora é manter o evento sob controle.'";
-
-          break;
-
-        // TI
         case "Conversar com Técnico de TI":
           currentDialogue =
-              "O Técnico de TI parece cansado.\n\n"
-              "'Os servidores sofreram acesso remoto durante o apagão.'\n\n"
-              "'Ainda estou tentando entender como isso aconteceu.'";
+              "'Alguém usou minhas credenciais durante o apagão. Eu não estava aqui.'";
 
-          if (gameState.addClue(
-              "Acesso remoto detectado")) {
-            _showClueFeedback(
-                "Acesso remoto detectado");
+          if (gameState.addClue("Credenciais do TI utilizadas remotamente")) {
+            _showClueFeedback("Credenciais do TI utilizadas remotamente");
           }
 
+          _checkUnlockBiblioteca(gameState);
           break;
 
+        case "Procurar por pistas":
+          currentDialogue =
+              "Você observa o ambiente, mas nada novo chama atenção.";
+          break;
+
+        case "Verificar Inventário":
+          currentDialogue =
+              "Você revisa mentalmente todas as pistas coletadas.";
+          break;
       }
     });
   }
 
-  // =========================================================
-  // PUZZLE
-  // =========================================================
+  void _checkUnlockBiblioteca(GameState gameState) {
+    if (gameState.allClues.length >= 3 &&
+        !gameState.hasToken('token_biblioteca')) {
+      gameState.addToken('token_biblioteca');
 
-  void _openPuzzle() async {
-    final result = await showDialog(
-      context: context,
-      builder: (_) => const ElectricalPuzzleDialog(),
-    );
-
-    if (result == true) {
-
-      final gameState = Provider.of<GameState>(
-        context,
-        listen: false,
-      );
-
-      gameState.completeInteraction(
-          'auditorio_puzzle');
-
-      if (gameState.addClue(
-          "Sistema restaurado revela acesso remoto")) {
-
-        _showClueFeedback(
-            "Sistema restaurado revela acesso remoto");
-      }
-
-      setState(() {
-        currentDialogue =
-            "Após restaurar parcialmente o sistema, você encontra registros ocultos indicando acesso remoto ao painel durante o apagão.";
-      });
+      currentDialogue +=
+          "\n\nAs evidências indicam que o apagão foi planejado. "
+          "Talvez a resposta esteja na biblioteca...";
     }
   }
 }

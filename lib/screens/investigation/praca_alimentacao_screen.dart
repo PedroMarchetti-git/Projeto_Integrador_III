@@ -329,7 +329,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.between,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('${_npcAtivo!.nomeNPC} (${_npcAtivo!.papel})', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
                                     IconButton(icon: const Icon(Icons.close, color: Colors.red), onPressed: _fecharConversa),
@@ -399,7 +399,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
                       if (_missaoConcluida)
                         Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(color: Colors.blue.shade50, border: BorderSide(color: Colors.blue.shade700, width: 2), borderRadius: BorderRadius.circular(8)),
+                          decoration: BoxDecoration(color: Colors.blue.shade50, border: Border.all(color: Colors.blue.shade700, width: 2), borderRadius: BorderRadius.circular(8)),
                           child: Column(
                             children: [
                               const Text('✨ O Auditório foi Desbloqueado! ✨', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),

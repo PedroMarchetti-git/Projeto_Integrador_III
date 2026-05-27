@@ -27,8 +27,7 @@ class GameState extends ChangeNotifier {
   }
 
   // Interações
-  bool isInteractionDone(String interaction) =>
-      _interactions.contains(interaction);
+  bool isInteractionDone(String interaction) => _interactions.contains(interaction);
   void completeInteraction(String interaction) {
     _interactions.add(interaction);
     notifyListeners();
@@ -43,26 +42,35 @@ class GameState extends ChangeNotifier {
   bool hasVisited(String location) => _visitedLocations.contains(location);
 
   late List<Ambiente> _listaDeAmbientes;
-  Position? posicaoAtual;
+  Position? _posicaoAtual;
   StreamSubscription<Position>? _gpsSubscription;
 
+  /// Retorna a última posição conhecida (pode ser nula).
+  Position? get posicaoAtual => _posicaoAtual;
+  List<Ambiente> get todosAmbientes => _listaDeAmbientes;
+
+  // CONSTRUTOR - Inicializa a lista e o GPS real
   GameState() {
-    _listaDeAmbientes = ambientes; // Carrega os ambientes do mock
-    //_iniciarMonitoramentoGPS();
-    _listaDeAmbientes.first.desbloqueado = true;
+    _listaDeAmbientes = List.from(ambientes); 
+    _iniciarMonitoramentoGPS(); 
   }
 
+  // Retorna qual ambiente o jogador deve ir agora (o primeiro ainda trancado)
   Ambiente? get ambienteAtual {
-    try{
-      return _listaDeAmbientes.firstWhere((amb)=> !amb.desbloqueado);
-    }catch(e){
+    try {
+      return _listaDeAmbientes.firstWhere((amb) => !amb.desbloqueado);
+    } catch (e) {
       return null;
     }
   }
 
-  void iniciarMonitoramentoGPS() async {
+  // FUNÇÃO DE MONITORAMENTO (VERSÃO REAL)
+  void _iniciarMonitoramentoGPS() async {
     LocationPermission permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) return;
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      debugPrint("DEBUG: Permissão de GPS negada pelo usuário.");
+      return;
+    }
 
     _gpsSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
@@ -70,18 +78,40 @@ class GameState extends ChangeNotifier {
         distanceFilter: 2, 
       ),
     ).listen((Position position) {
-      posicaoAtual = position;
-      notifyListeners();
+      _posicaoAtual = position;
+      debugPrint("DEBUG: GPS Atualizado -> Lat: ${position.latitude}, Long: ${position.longitude}");
+    
+      if (estaNoRaioDoAmbiente()) {
+        debugPrint("DEBUG: Jogador chegou ao local! Desbloqueando permanentemente...");
+        desbloquearAmbiente(); 
+      }
+      notifyListeners(); 
     });
   }
 
-  bool estaNoRaioDoAmbiente(){
-    return true;
+  // CALCULO DE RAIO REAL (VERSÃO REAL)
+  bool estaNoRaioDoAmbiente() {
+    if (_posicaoAtual == null || ambienteAtual == null) {
+      return false; 
+    }
+
+    double distanciaEmMetros = Geolocator.distanceBetween(
+      _posicaoAtual!.latitude,
+      _posicaoAtual!.longitude,
+      ambienteAtual!.latitude,
+      ambienteAtual!.longitude,
+    );
+
+    debugPrint("DEBUG: Distância até ${ambienteAtual!.nome}: ${distanciaEmMetros.toStringAsFixed(2)} metros");
+
+    // Raio de tolerância configurado para 30 metros do local alvo
+    return distanciaEmMetros <= 30.0; 
   }
 
-  void desbloquearAmbiente(){
+  // Conclui o ambiente atual
+  void desbloquearAmbiente() {
     final atual = ambienteAtual;
-    if (atual != null){
+    if (atual != null) {
       atual.desbloqueado = true;
       visitLocation(atual.nome);
       notifyListeners();
