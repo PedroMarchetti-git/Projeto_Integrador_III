@@ -4,6 +4,7 @@ import '../../models/game_state.dart';
 import 'caab_screens.dart';
 import 'auditorio_screen.dart';
 import 'biblioteca_screen.dart';
+import 'manacas.dart';
 import 'praca_alimentacao_screen.dart';
 
 class AmbientesScreen extends StatelessWidget {
@@ -75,16 +76,36 @@ class AmbientesScreen extends StatelessWidget {
 
   void _navegarParaAmbiente(BuildContext context, ambiente) {
     switch (ambiente.nome) {
-      case 'CAAB':
+      case '1':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const AuditorioScreen()),
+        );
+        break;
+      case '2':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const BibliotecaScreen()),
+        );
+        break;
+      case '3':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const PracaAlimentacaoScreen()),
+        );
+        break;
+      case '4':
         Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const CaabScreen()),
         );
         break;
-
+      case '5':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => ManacasScreen()),
+        );
+        break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Entrando no ${ambiente.nome}")),
         );
+        break;
     }
   }
 }

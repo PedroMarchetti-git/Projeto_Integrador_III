@@ -64,12 +64,32 @@ class GameState extends ChangeNotifier {
     }
   }
 
-  // FUNÇÃO DE MONITORAMENTO (VERSÃO REAL)
-  void _iniciarMonitoramentoGPS() async {
-    LocationPermission permission = await Geolocator.requestPermission();
+void _iniciarMonitoramentoGPS() async {
+    // 1. Checa e pede permissão
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      debugPrint("DEBUG: Permissão de GPS negada pelo usuário.");
+      debugPrint("DEBUG: Permissão de GPS negada pelo usuário ou navegador.");
       return;
+    }
+
+    try {
+      debugPrint("DEBUG: Tentando forçar a busca do GPS inicial...");
+      _posicaoAtual = await Geolocator.getCurrentPosition(
+        // Reduzimos para 'medium' na web para garantir que o navegador responda rápido
+        desiredAccuracy: LocationAccuracy.medium, 
+        // Se o navegador demorar mais de 5 segundos, abortamos para não travar o app
+        timeLimit: const Duration(seconds: 5), 
+      );
+      _verificarDesbloqueioPorProximidade();
+    } catch (e) {
+      debugPrint("DEBUG: Falha na busca inicial (Timeout ou Bloqueio): $e");
+      // Fallback: Se falhar, pegamos a última posição que o navegador tem em cache
+      _posicaoAtual = await Geolocator.getLastKnownPosition();
+      _verificarDesbloqueioPorProximidade();
     }
 
     _gpsSubscription = Geolocator.getPositionStream(
@@ -78,17 +98,22 @@ class GameState extends ChangeNotifier {
         distanceFilter: 2, 
       ),
     ).listen((Position position) {
-      _posicaoAtual = position;
-      debugPrint("DEBUG: GPS Atualizado -> Lat: ${position.latitude}, Long: ${position.longitude}");
-    
+      _posicaoAtual = position; 
+      debugPrint("DEBUG: GPS Movimento -> Lat: ${position.latitude}, Long: ${position.longitude}");
+      
       if (estaNoRaioDoAmbiente()) {
-        debugPrint("DEBUG: Jogador chegou ao local! Desbloqueando permanentemente...");
         desbloquearAmbiente(); 
       }
       notifyListeners(); 
     });
   }
 
+  // Verifica e desbloqueia o ambiente atual se estiver no raio
+  void _verificarDesbloqueioPorProximidade() {
+    if (estaNoRaioDoAmbiente()) {
+      desbloquearAmbiente();
+    }
+  }
   // CALCULO DE RAIO REAL (VERSÃO REAL)
   bool estaNoRaioDoAmbiente() {
     if (_posicaoAtual == null || ambienteAtual == null) {

@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 import '../../models/game_state.dart';
 import 'ambientes_screen.dart';
 
-class TelaAcusacaoManacas extends StatefulWidget {
+class ManacasScreen extends StatefulWidget {
   @override
-  _TelaAcusacaoManacasState createState() => _TelaAcusacaoManacasState();
+  _ManacasScreenState createState() => _ManacasScreenState();
 }
 
-class _TelaAcusacaoManacasState extends State<TelaAcusacaoManacas> {
+class _ManacasScreenState extends State<ManacasScreen> {
   final List<String> npcs = [
     'Rafael (Técnico de Som)',
     'Coordenador de Eventos',
