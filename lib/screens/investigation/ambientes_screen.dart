@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/game_state.dart';
-import 'caab_screens.dart';
+import 'ceaab_screns.dart';
 import 'auditorio_screen.dart';
 import 'biblioteca_screen.dart';
 import 'manacas.dart';
@@ -93,7 +93,7 @@ class AmbientesScreen extends StatelessWidget {
         break;
       case '4':
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const CaabScreen()),
+          MaterialPageRoute(builder: (_) => const CeaabScreen()),
         );
         break;
       case '5':

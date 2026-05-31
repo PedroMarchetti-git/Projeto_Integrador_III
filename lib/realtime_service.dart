@@ -12,7 +12,7 @@ class RealtimeService {
         "ultima_atualizacao": ServerValue.timestamp,
       });
     } catch (e) {
-      print("Erro ao salvar progresso no Realtime: $e");
+      debugPrint("Erro ao salvar progresso no Realtime: $e");
     }
   }
 
