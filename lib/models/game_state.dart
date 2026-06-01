@@ -82,7 +82,6 @@ void _iniciarMonitoramentoGPS() async {
         desiredAccuracy: LocationAccuracy.medium, 
         timeLimit: const Duration(seconds: 5), 
       );
-      // REMOVIDO o gatilho de desbloqueio. Apenas avisa a tela para atualizar o cadeado!
       notifyListeners();
     } catch (e) {
       debugPrint("DEBUG: Falha na busca inicial (Timeout ou Bloqueio): $e");
@@ -103,22 +102,34 @@ void _iniciarMonitoramentoGPS() async {
     });
   }
 
+  double? _ultimaDistancia;
+
   bool estaNoRaioDoAmbiente() {
     if (_posicaoAtual == null || ambienteAtual == null) {
       return false; 
     }
 
-    double distanciaEmMetros = Geolocator.distanceBetween(
+    _ultimaDistancia = Geolocator.distanceBetween(
       _posicaoAtual!.latitude,
       _posicaoAtual!.longitude,
       ambienteAtual!.latitude,
       ambienteAtual!.longitude,
     );
 
-    // Raio de tolerância configurado para 30 metros do local alvo
-    return distanciaEmMetros <= 30.0; 
+    // Raio de tolerância configurado para 70 metros
+    return _ultimaDistancia! <= 70.0; 
   }
 
+  // NOVA FUNÇÃO: O detetive que nos dirá o que está dando errado
+  String obterMotivoBloqueio() {
+    if (_posicaoAtual == null) {
+      return "Aguardando sinal do satélite GPS... Vá para um local aberto.";
+    }
+    if (_ultimaDistancia != null) {
+      return "Você está a ${_ultimaDistancia!.toStringAsFixed(0)} metros de distância. (Faltam chegar mais perto!)";
+    }
+    return "Calculando rota...";
+  }
   // Conclui o ambiente atual
   void desbloquearAmbiente() {
     final atual = ambienteAtual;

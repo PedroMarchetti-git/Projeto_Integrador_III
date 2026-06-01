@@ -10,130 +10,120 @@ class BibliotecaScreen extends StatefulWidget {
 }
 
 class _BibliotecaScreenState extends State<BibliotecaScreen> {
-  // Variáveis do Minigame
-  final String _codigoCorreto = "1968"; // Ex: Ano de fundação da PUC Campinas
-  String _codigoDigitado = "";
-  bool _feedbackVisivel = false;
-  bool _progressoSalvo = false;
+  String currentDialogue = "";
+  
+  // Variável para controlar se o minigame já foi vencido
+  bool terminalDesbloqueado = false; 
 
   @override
   void initState() {
     super.initState();
-    // Registra que o jogador visitou a biblioteca
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<GameState>(context, listen: false).visitLocation('biblioteca');
+      _initializeLocation();
     });
   }
 
-  // Função para lidar com a digitação dos números
-  void _addNumero(String numero) {
-    if (_codigoDigitado.length < 4) {
-      setState(() {
-        _codigoDigitado += numero;
-        _feedbackVisivel = false; // Esconde feedback de erro anterior
-      });
-    }
-
-    // Se completou 4 dígitos, verifica automaticamente
-    if (_codigoDigitado.length == 4) {
-      _verificarCodigo();
-    }
-  }
-
-  void _limpar() {
-    setState(() {
-      _codigoDigitado = "";
-      _feedbackVisivel = false;
-    });
-  }
-
-  void _verificarCodigo() {
+  void _initializeLocation() {
     final gameState = Provider.of<GameState>(context, listen: false);
+    gameState.visitLocation('biblioteca');
+    setState(() {
+      currentDialogue = _getInitialDescription();
+    });
+  }
 
-    if (_codigoDigitado == _codigoCorreto) {
-      // SUCESSO!
-      setState(() {
-        _progressoSalvo = true;
-      });
-      
-      // Adiciona a pista no GameState
-      gameState.addClue("Documento secreto encontrado na Biblioteca (Código 1968)");
-      gameState.completeInteraction('biblioteca_puzzle_resolvido');
-      
-      // Opcional: Dar um token ou desbloquear o próximo ambiente aqui
-      // gameState.desbloquearAmbiente(); 
-    } else {
-      // ERRO
-      setState(() {
-        _feedbackVisivel = true;
-        // Opcional: Limpar automaticamente após erro
-        Future.delayed(const Duration(seconds: 1), () => _limpar());
-      });
-    }
+  // === REGRA PARA O BOTÃO VERDE APARECER (Agora exige o vídeo das câmeras) ===
+  bool _todasPistasColetadas(GameState gameState) {
+    return gameState.allClues.contains("Relato da Bibliotecária") &&
+           gameState.allClues.contains("Página do mapa elétrico roubada") &&
+           gameState.allClues.contains("Vídeo das câmeras: Recibo da Praça");
   }
 
   @override
   Widget build(BuildContext context) {
+    final gameState = context.watch<GameState>();
+    final actions = _getAvailableActions(gameState);
+
     return Scaffold(
-      // Mantemos o Scaffold com fundo preto para o caso da imagem demorar a carregar
-      backgroundColor: const Color(0xFF121212), 
       appBar: AppBar(
-        title: const Text("Biblioteca Central"),
-        backgroundColor: Colors.black54,
-        elevation: 0,
+        title: const Text("Biblioteca"),
+        backgroundColor: Colors.brown.shade800,
+        foregroundColor: Colors.white,
       ),
-      // O Scaffold estende o corpo para trás da AppBar para evitar cortes
-      extendBodyBehindAppBar: true, 
       body: Stack(
         children: [
-          // 1. IMAGEM DE FUNDO - Ocupa 100% da tela do aparelho
-          Positioned.fill(
-            child: Image.asset(
-              "assets/images/biblioteca.png", 
-              fit: BoxFit.cover, // Corta e estica proporcionalmente para cobrir tudo
-            ),
-          ),
-          
-          // 2. MÁSCARA ESCURA - Também cobre 100% da tela para manter o contraste
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.55), // Escurece um pouco mais para dar leitura
-            ),
-          ),
-
-          // 3. CONTEÚDO NARRATIVO E MINIGAME
+          Container(color: const Color(0xFF1E1E1E)),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Texto Narrativo
-                  _buildNarrativeText(),
-                  
-                  const SizedBox(height: 30),
-                  
-                  // O MINIGAME OU TELA DE SUCESSO
-                  _progressoSalvo 
-                    ? _buildSucessoWidget()
-                    : Expanded(child: SingleChildScrollView(child: _buildPuzzleWidget())),
+                  Card(
+                    color: Colors.brown.shade50,
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        currentDialogue,
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  const Text("Ações Disponíveis:", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: actions.length,
+                      itemBuilder: (_, index) {
+                        final action = actions[index];
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: action.contains("Terminal") ? Colors.blue.shade800 : Colors.brown.shade600,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            onPressed: () => _handleAction(action),
+                            child: Text(action, textAlign: TextAlign.center),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                   
                   const SizedBox(height: 10),
-                  // BOTÃO DE TESTE 
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+
+                  if (_todasPistasColetadas(gameState))
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(color: Colors.green.shade50, border: Border.all(color: Colors.green.shade700, width: 2), borderRadius: BorderRadius.circular(8)),
+                      child: Column(
+                        children: [
+                          const Text('✨ Pista Crucial Encontrada! ✨', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
+                          const SizedBox(height: 8),
+                          const Text('As câmeras mostraram o suspeito fugindo. Na pressa, ele deixou cair um recibo da Praça de Alimentação.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87)),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade700, foregroundColor: Colors.white, minimumSize: const Size.fromHeight(45)),
+                            onPressed: () {
+                              context.read<GameState>().desbloquearAmbiente();
+                              Navigator.pop(context); 
+                            },
+                            child: const Text("Avançar para a Praça de Alimentação"),
+                          ),
+                        ],
+                      ),
                     ),
-                    onPressed: () {
-                      // 1. Avisa o GameState que esta sala foi concluída!
-                      context.read<GameState>().desbloquearAmbiente();
-                      
-                      // 2. Volta para a lista de ambientes
-                      Navigator.pop(context); 
-                    },
-                    child: const Text("Finalizar Investigação desta Sala", style: TextStyle(color: Colors.white)),
-                  ),
                 ],
               ),
             ),
@@ -143,167 +133,195 @@ class _BibliotecaScreenState extends State<BibliotecaScreen> {
     );
   }
 
-  Widget _buildNarrativeText() {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: const Text(
-        "O silêncio na Biblioteca Central é absoluto, quebrado apenas pelo ranger do chão de madeira. "
-        "Entre as estantes de História, você nota quatro livros desalinhados. "
-        "Suas lombadas parecem conter uma mensagem cifrada. Há um pequeno cofre digital escondido atrás deles.",
-        style: TextStyle(color: Colors.white, fontSize: 16, height: 1.4),
-      ),
+  String _getInitialDescription() {
+    return "O silêncio da biblioteca contrasta com a confusão lá fora. Você veio buscar a planta do sistema elétrico da PUC. O acervo de engenharia fica no segundo andar, e o terminal de computadores da Dona Marta está piscando um aviso de erro.";
+  }
+
+  List<String> _getAvailableActions(GameState gameState) {
+    List<String> actions = [];
+
+    if (!gameState.isInteractionDone('biblioteca_balcao')) {
+      actions.add("Conversar com Dona Marta (Bibliotecária)");
+    }
+    if (!gameState.isInteractionDone('biblioteca_estante')) {
+      actions.add("Procurar na Seção de Engenharia");
+    }
+    if (gameState.isInteractionDone('biblioteca_estante') && !gameState.isInteractionDone('biblioteca_livro')) {
+      actions.add("Analisar o livro 'Infraestrutura Elétrica'");
+    }
+    
+    // O Minigame aparece depois de encontrar o livro rasgado
+    if (gameState.isInteractionDone('biblioteca_livro') && !terminalDesbloqueado) {
+      actions.add("Acessar Terminal de Câmeras (Bloqueado)");
+    }
+
+    actions.add("Revisar Caderno de Pistas");
+    return actions;
+  }
+
+  void _showClueFeedback(String clue) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Nova pista: $clue"), backgroundColor: Colors.amber.shade800, duration: const Duration(seconds: 3)),
     );
   }
 
-  // Estrutura do Puzzle
-  Widget _buildPuzzleWidget() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.amberAccent.withOpacity(0.5), width: 2),
-      ),
-      child: Column(
+  void _handleAction(String action) {
+    final gameState = Provider.of<GameState>(context, listen: false);
+
+    setState(() {
+      switch (action) {
+        case "Conversar com Dona Marta (Bibliotecária)":
+          currentDialogue = "Dona Marta ajeita os óculos, nervosa.\n\n'Alguém subiu correndo para o setor de exatas antes do apagão. O sistema do meu computador travou logo depois que ele saiu.'";
+          gameState.completeInteraction('biblioteca_balcao');
+          if (gameState.addClue("Relato da Bibliotecária")) _showClueFeedback("Alguém apressado foi para o setor de exatas.");
+          break;
+
+        case "Procurar na Seção de Engenharia":
+          currentDialogue = "Na prateleira de Engenharia, o volume 4 de 'Infraestrutura do Campus' foi deixado jogado em cima de uma mesa.";
+          gameState.completeInteraction('biblioteca_estante');
+          break;
+
+        case "Analisar o livro 'Infraestrutura Elétrica'":
+          currentDialogue = "A página que continha a planta principal foi arrancada com força!\n\nPrecisamos ver nas câmeras de segurança quem estava sentado aqui. O terminal da biblioteca fica no térreo.";
+          gameState.completeInteraction('biblioteca_livro');
+          if (gameState.addClue("Página do mapa elétrico roubada")) _showClueFeedback("Página roubada");
+          break;
+
+        case "Acessar Terminal de Câmeras (Bloqueado)":
+          // Abre a janela do Minigame!
+          _iniciarMinigameTerminal(gameState);
+          break;
+
+        case "Revisar Caderno de Pistas":
+          currentDialogue = "Você tem ${gameState.allClues.length} pistas coletadas no total. Pensa no que tudo isso significa...";
+          break;
+      }
+    });
+  }
+
+  // =========================================================================
+  // MOTOR DO MINIGAME - JANELA FLUTUANTE
+  // =========================================================================
+  void _iniciarMinigameTerminal(GameState gameState) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Impede de fechar clicando fora
+      builder: (BuildContext context) {
+        return MinigameTerminal(
+          onVictory: () {
+            Navigator.of(context).pop(); // Fecha o dialog
+            setState(() {
+              terminalDesbloqueado = true;
+              currentDialogue = "ACESSO CONCEDIDO.\n\nO vídeo da câmera mostra o suspeito rasgando o livro. Ao correr, algo cai do bolso dele. Você vai até a mesa e encontra a pista: um recibo de lanche comprado minutos antes.";
+              if (gameState.addClue("Vídeo das câmeras: Recibo da Praça")) {
+                _showClueFeedback("Vídeo das câmeras: Recibo da Praça");
+              }
+            });
+          },
+        );
+      },
+    );
+  }
+}
+
+// =========================================================================
+// CLASSE DO MINIGAME (Lógica Separada para manter o Clean Code)
+// =========================================================================
+class MinigameTerminal extends StatefulWidget {
+  final VoidCallback onVictory;
+  
+  const MinigameTerminal({super.key, required this.onVictory});
+
+  @override
+  State<MinigameTerminal> createState() => _MinigameTerminalState();
+}
+
+class _MinigameTerminalState extends State<MinigameTerminal> {
+  // A ordem correta exigida (Índices dos botões)
+  // Portas: 21, 80, 443, 8080 -> Posições na lista: 2, 0, 3, 1
+  final List<int> sequenciaCorreta = [2, 0, 3, 1];
+  List<int> sequenciaDoJogador = [];
+  bool erro = false;
+
+  final List<String> botoes = ["Porta 80", "Porta 8080", "Porta 21", "Porta 443"];
+
+  void _pressionarBotao(int index) {
+    setState(() {
+      erro = false;
+      // Adiciona o botão na sequência se ele já não foi apertado
+      if (!sequenciaDoJogador.contains(index)) {
+        sequenciaDoJogador.add(index);
+        
+        // Verifica a vitória
+        if (sequenciaDoJogador.length == sequenciaCorreta.length) {
+          bool venceu = true;
+          for (int i = 0; i < sequenciaCorreta.length; i++) {
+            if (sequenciaDoJogador[i] != sequenciaCorreta[i]) {
+              venceu = false;
+              break;
+            }
+          }
+
+          if (venceu) {
+            widget.onVictory();
+          } else {
+            // Se errou, mostra feedback visual e reseta
+            erro = true;
+            sequenciaDoJogador.clear();
+          }
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Colors.blueGrey.shade900,
+      title: const Text("Bypass de Segurança", style: TextStyle(color: Colors.greenAccent, fontFamily: 'Courier')),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
-            "Pista nas Lombadas:",
-            style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold, fontSize: 18),
+            "O terminal foi travado pelo suspeito.\nPara acessar o log de câmeras, reconecte as portas de rede em ORDEM CRESCENTE.",
+            style: TextStyle(color: Colors.white70),
           ),
-          const SizedBox(height: 10),
-          const Text(
-            "'O saber começou aqui. Digite o ano em que estas portas se abriram pela primeira vez.'",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 15, fontStyle: FontStyle.italic),
-          ),
-          const SizedBox(height: 25),
-          
-          // Display do Código
-          _buildCodeDisplay(),
-          
+          const SizedBox(height: 20),
+          if (erro)
+            const Text("SEQUÊNCIA INVÁLIDA. SISTEMA REINICIADO.", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           
-          // Feedback de erro
-          if (_feedbackVisivel)
-            const Text("Código Incorreto!", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+          // Geração dos botões do minigame
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            children: List.generate(botoes.length, (index) {
+              bool pressionado = sequenciaDoJogador.contains(index);
+              return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: pressionado ? Colors.green : Colors.blueGrey.shade700,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: pressionado ? null : () => _pressionarBotao(index),
+                child: Text(botoes[index]),
+              );
+            }),
+          ),
           
           const SizedBox(height: 20),
-          
-          // Teclado Numérico
-          _buildNumericKeyboard(),
+          Text(
+            "Conexões estabelecidas: ${sequenciaDoJogador.length} / ${botoes.length}",
+            style: const TextStyle(color: Colors.greenAccent),
+          )
         ],
       ),
-    );
-  }
-
-  // Visualização dos dígitos
-  Widget _buildCodeDisplay() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(4, (index) {
-        String char = "";
-        if (index < _codigoDigitado.length) {
-          char = _codigoDigitado[index];
-        }
-        return Container(
-          width: 50,
-          height: 60,
-          margin: const EdgeInsets.symmetric(horizontal: 5),
-          decoration: BoxDecoration(
-            color: Colors.white10,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: _feedbackVisivel ? Colors.redAccent : Colors.white24),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            char,
-            style: const TextStyle(color: Colors.amberAccent, fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-        );
-      }),
-    );
-  }
-
-  // Teclado Numérico (Bões de 0 a 9 e Limpar)
-  Widget _buildNumericKeyboard() {
-    return Column(
-      children: [
-        for (var row in [
-          [1, 2, 3],
-          [4, 5, 6],
-          [7, 8, 9],
-        ])
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: row.map((n) => _buildKeyButton(n.toString())).toList(),
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildKeyButton("Limpar", isSpecial: true),
-            _buildKeyButton("0"),
-            // Botão vazio para alinhar
-            const SizedBox(width: 70),
-          ],
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(), // Botão de desistir/voltar
+          child: const Text("Abortar", style: TextStyle(color: Colors.redAccent)),
         )
       ],
-    );
-  }
-
-  Widget _buildKeyButton(String label, {bool isSpecial = false}) {
-    return Container(
-      width: isSpecial ? 150 : 70,
-      height: 60,
-      margin: const EdgeInsets.all(5),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSpecial ? Colors.red.shade900 : Colors.grey,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        onPressed: () {
-          if (isSpecial) {
-            _limpar();
-          } else {
-            _addNumero(label);
-          }
-        },
-        child: Text(label, style: TextStyle(fontSize: isSpecial ? 16 : 24, fontWeight: FontWeight.bold)),
-      ),
-    );
-  }
-
-  // Tela de Sucesso após resolver
-  Widget _buildSucessoWidget() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.greenAccent, width: 2),
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.check_circle_outline, color: Colors.greenAccent, size: 60),
-          SizedBox(height: 15),
-          Text(
-            "Cofre Aberto!",
-            style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 22),
-          ),
-          SizedBox(height: 10),
-          Text(
-            "Você encontrou um documento antigo sobre o sistema elétrico da PUC. "
-            "Uma nova pista foi adicionada ao seu inventário.",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -73,10 +73,9 @@ class AmbientesScreen extends StatelessWidget {
                 } else {
                   // Se está vermelho, mostra o aviso!
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Você ainda não chegou ao local correto para investigar!"),
-                      backgroundColor: Colors.red,
-                      duration: Duration(seconds: 2),
+                    SnackBar(
+                      content: Text(gameState.obterMotivoBloqueio()),
+                      duration: const Duration(seconds: 3),
                     ),
                   );
                 }
