@@ -79,42 +79,30 @@ void _iniciarMonitoramentoGPS() async {
     try {
       debugPrint("DEBUG: Tentando forçar a busca do GPS inicial...");
       _posicaoAtual = await Geolocator.getCurrentPosition(
-        // Reduzimos para 'medium' na web para garantir que o navegador responda rápido
         desiredAccuracy: LocationAccuracy.medium, 
-        // Se o navegador demorar mais de 5 segundos, abortamos para não travar o app
         timeLimit: const Duration(seconds: 5), 
       );
-      _verificarDesbloqueioPorProximidade();
+      // REMOVIDO o gatilho de desbloqueio. Apenas avisa a tela para atualizar o cadeado!
+      notifyListeners();
     } catch (e) {
       debugPrint("DEBUG: Falha na busca inicial (Timeout ou Bloqueio): $e");
-      // Fallback: Se falhar, pegamos a última posição que o navegador tem em cache
       _posicaoAtual = await Geolocator.getLastKnownPosition();
-      _verificarDesbloqueioPorProximidade();
+      notifyListeners();
     }
 
     _gpsSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 2, 
+        distanceFilter: 0, 
       ),
     ).listen((Position position) {
       _posicaoAtual = position; 
       debugPrint("DEBUG: GPS Movimento -> Lat: ${position.latitude}, Long: ${position.longitude}");
       
-      if (estaNoRaioDoAmbiente()) {
-        desbloquearAmbiente(); 
-      }
       notifyListeners(); 
     });
   }
 
-  // Verifica e desbloqueia o ambiente atual se estiver no raio
-  void _verificarDesbloqueioPorProximidade() {
-    if (estaNoRaioDoAmbiente()) {
-      desbloquearAmbiente();
-    }
-  }
-  // CALCULO DE RAIO REAL (VERSÃO REAL)
   bool estaNoRaioDoAmbiente() {
     if (_posicaoAtual == null || ambienteAtual == null) {
       return false; 
@@ -126,8 +114,6 @@ void _iniciarMonitoramentoGPS() async {
       ambienteAtual!.latitude,
       ambienteAtual!.longitude,
     );
-
-    debugPrint("DEBUG: Distância até ${ambienteAtual!.nome}: ${distanciaEmMetros.toStringAsFixed(2)} metros");
 
     // Raio de tolerância configurado para 30 metros do local alvo
     return distanciaEmMetros <= 30.0; 

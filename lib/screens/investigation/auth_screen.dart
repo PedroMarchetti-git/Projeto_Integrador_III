@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../home/home_screen.dart';
-import '../../firestore_service.dart';
+import '../../services/firestore_service.dart';
 
 
 class AuthScreen extends StatefulWidget {
