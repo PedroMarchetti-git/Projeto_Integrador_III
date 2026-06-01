@@ -82,7 +82,7 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     } catch (e) {
       // Captura erros de banco de dados e evita o travamento do app
-      print("⚠️ Erro na operação com banco de dados: $e");
+      debugPrint ("⚠️ Erro na operação com banco de dados: $e");
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const HomeScreen()),
