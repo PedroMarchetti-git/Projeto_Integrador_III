@@ -64,32 +64,45 @@ class GameState extends ChangeNotifier {
     }
   }
 
-  // FUNÇÃO DE MONITORAMENTO (VERSÃO REAL)
-  void _iniciarMonitoramentoGPS() async {
-    LocationPermission permission = await Geolocator.requestPermission();
+void _iniciarMonitoramentoGPS() async {
+    // 1. Checa e pede permissão
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      debugPrint("DEBUG: Permissão de GPS negada pelo usuário.");
+      debugPrint("DEBUG: Permissão de GPS negada pelo usuário ou navegador.");
       return;
+    }
+
+    try {
+      debugPrint("DEBUG: Tentando forçar a busca do GPS inicial...");
+      _posicaoAtual = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium, 
+        timeLimit: const Duration(seconds: 5), 
+      );
+      // REMOVIDO o gatilho de desbloqueio. Apenas avisa a tela para atualizar o cadeado!
+      notifyListeners();
+    } catch (e) {
+      debugPrint("DEBUG: Falha na busca inicial (Timeout ou Bloqueio): $e");
+      _posicaoAtual = await Geolocator.getLastKnownPosition();
+      notifyListeners();
     }
 
     _gpsSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 2, 
+        distanceFilter: 0, 
       ),
     ).listen((Position position) {
-      _posicaoAtual = position;
-      debugPrint("DEBUG: GPS Atualizado -> Lat: ${position.latitude}, Long: ${position.longitude}");
-    
-      if (estaNoRaioDoAmbiente()) {
-        debugPrint("DEBUG: Jogador chegou ao local! Desbloqueando permanentemente...");
-        desbloquearAmbiente(); 
-      }
+      _posicaoAtual = position; 
+      debugPrint("DEBUG: GPS Movimento -> Lat: ${position.latitude}, Long: ${position.longitude}");
+      
       notifyListeners(); 
     });
   }
 
-  // CALCULO DE RAIO REAL (VERSÃO REAL)
   bool estaNoRaioDoAmbiente() {
     if (_posicaoAtual == null || ambienteAtual == null) {
       return false; 
@@ -101,8 +114,6 @@ class GameState extends ChangeNotifier {
       ambienteAtual!.latitude,
       ambienteAtual!.longitude,
     );
-
-    debugPrint("DEBUG: Distância até ${ambienteAtual!.nome}: ${distanciaEmMetros.toStringAsFixed(2)} metros");
 
     // Raio de tolerância configurado para 30 metros do local alvo
     return distanciaEmMetros <= 30.0; 

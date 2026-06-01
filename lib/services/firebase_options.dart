@@ -39,15 +39,15 @@ class DefaultFirebaseOptions {
         );
     }
   }
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC0JvsShHzMmpJ9m7wn-HpqLEJepGu3KAA',
-    appId: '1:420337132658:web:245d44337d293a931c0eeb',
-    messagingSenderId: '420337132658',
-    projectId: 'projeto-integrador-iii-2ff26',
-    authDomain: 'projeto-integrador-iii-2ff26.firebaseapp.com',
-    storageBucket: 'projeto-integrador-iii-2ff26.firebasestorage.app',
-    measurementId: 'G-Y91CMDWCLE',
+   static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAiBQP74iC_c06XqsVAIWcg2RQLb0k8s3I', // Mude aqui
+    appId: '1:307031613459:web:eaff304b6a3ab3772a9fe6', // Mude aqui
+    messagingSenderId: '307031613459', // Mude aqui
+    projectId: 'pi3-rpg', // Mude aqui
+    authDomain: '://firebaseapp.com', // Mude aqui
+    storageBucket: 'pi3-rpg.firebasestorage.app', // Mude aqui
+    databaseURL: 'https://firebaseio.com', // Adicione/Mude aqui
+    measurementId: 'G-5CLYCEYP1M', // Mude aqui
   );
 
   static const FirebaseOptions android = FirebaseOptions(
