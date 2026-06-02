@@ -158,9 +158,9 @@ void _checkUnlockManacas(GameState gameState) { // Função para verificar se o 
                   ],
                 ),
                 if (gameState.allClues.isNotEmpty) ...[ // Verifica se o jogador coletou alguma pista e, se sim, exibe a seção de pistas coletadas, permitindo que o jogador veja as informações relevantes para a investigação de forma clara e organizada, criando uma experiência mais envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
-                  const SizedBox(height: 20),// Adiciona um espaçamento vertical de 20 pixels entre a seção de navegação e a seção de pistas coletadas, criando uma separação visual clara e melhorando a organização da interface para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
+                  const SizedBox(height: 16),// Adiciona um espaçamento vertical de 20 pixels entre a seção de navegação e a seção de pistas coletadas, criando uma separação visual clara e melhorando a organização da interface para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
                   const Text(// Exibe o título "Pistas:" para indicar ao jogador que as informações listadas abaixo são as pistas coletadas, criando uma estrutura clara e fácil de entender para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
-                    'Pistas:', // Define o título para as pistas coletadas, indicando ao jogador que as informações listadas abaixo são as pistas coletadas, criando uma estrutura clara e fácil de entender para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
+                    "📋 Pistas Encontradas no Ambiente:", // Define o título para as pistas coletadas, indicando ao jogador que as informações listadas abaixo são as pistas coletadas, criando uma estrutura clara e fácil de entender para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
                     style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.bold, fontSize: 16), // Define o estilo do título das pistas coletadas, com uma cor azul clara, negrito e tamanho de fonte de 16 pixels para destacar a seção de pistas coletadas e criar uma experiência visual mais atraente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
                   ),
                   ...gameState.allClues.map((clue) => TweenAnimationBuilder<double>( // Utiliza TweenAnimationBuilder para criar uma animação suave de fade-in e slide-up para cada pista coletada, tornando a experiência de visualização das pistas mais dinâmica e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
@@ -242,7 +242,8 @@ void _checkUnlockManacas(GameState gameState) { // Função para verificar se o 
         break; // Fecha o case "Examinar a obra de arte"
 
       case "Verificar os computadores": // Lida com a ação de verificar os computadores, atualizando o diálogo do jogo para informar o jogador que os computadores estão desligados devido ao apagão, marcando a interação como concluída no estado do jogo e verificando o progresso das pistas para desbloquear novas ações ou locais, criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
-        currentDialogue = "Os computadores estão desligados devido ao apagão."; // Atualiza o diálogo do jogo para informar o jogador que os computadores estão desligados devido ao apagão, criando uma experiência mais imersiva e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
+        currentDialogue = "💻 Os computadores estão desligados devido ao apagão, mas você nota um pen-drive deixado em uma das portas USB com arquivos sobre o sistema elétrico!"; // Atualiza o diálogo do jogo para informar o jogador que os computadores estão desligados devido ao apagão, criando uma experiência mais imersiva e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
+        gameState.addClue("Pen-drive com arquivos criptografados encontrado no computador central.");
         gameState.completeInteraction('ceaab_computers'); // Marca a interação de verificar os computadores como concluída no estado do jogo, garantindo que o jogador não possa repetir essa ação e que o progresso do jogo seja registrado corretamente, criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
         _verificarProgressoDasPistas(); // Verifica o progresso das pistas para desbloquear novas ações ou locais com base nas pistas coletadas, permitindo que o jogador avance na investigação de forma fluida e criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
         break;// Fecha o case "Verificar os computadores"
@@ -287,11 +288,22 @@ void _checkUnlockManacas(GameState gameState) { // Função para verificar se o 
     actions.add("Procurar por pistas");// A ação de procurar por pistas está sempre disponível, permitindo que o jogador interaja com essa opção para tentar encontrar novas informações e avançar na investigação de forma fluida, criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
     actions.add("Verificar Inventário"); // A ação de verificar o inventário está sempre disponível, permitindo que o jogador veja as pistas coletadas e os itens adquiridos, criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
 
+      // Se o jogador coletou pelo menos 3 pistas e ainda não ganhou o token, ele desbloqueia a fase!
+  if (gameState.allClues.length >= 3 && !gameState.hasToken('token_manacas')) { // Verifica se o jogador coletou pelo menos 3 pistas e ainda não possui o token necessário para acessar a Manacás, e se for o caso, concede o token ao jogador, atualiza o diálogo para informar sobre
+    gameState.addToken('token_manacas');// Concede o token necessário para acessar a Manacás ao jogador, permitindo que ele avance para a próxima fase da investigação de forma fluida e criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
+    // Adiciona uma mensagem avisando o jogador no diálogo atual
+    currentDialogue += "\n\n✨ [DESBLOQUEADO] Sensacional! Você coletou todas as pistas. O acesso ao Manacás está liberado!";
+  }
+  // Se o usuário já tiver o token (porque acabou de ganhar ou já tinha antes), a opção aparece na tela
+  if (gameState.hasToken('token_manacas')) {
+    actions.add("Ir para o Manacás");
+  } else {
+    //Adiciona uma opção visual de cadeado desativada para dar a dica pro jogador
+    actions.add("🔒 Ir para o Manacás (Bloqueado: Requer no mínimo 2 pistas)");
+  }
     if (gameState.hasToken('token_manacas')) {// Verifica se o jogador possui o token necessário para acessar a Manacás e, se for o caso, adiciona a ação "Ir para a Manacás" à lista de ações disponíveis, permitindo que o jogador avance para a próxima fase da investigação de forma fluida e criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
-      actions.add("Ir para a Manacás"); // Adiciona a ação "Ir para a Manacás" à lista de ações disponíveis, permitindo que o jogador avance para a próxima fase da investigação de forma fluida e criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
+      actions.add("Ir para o Manacás"); // Adiciona a ação "Ir para o Manacás" à lista de ações disponíveis, permitindo que o jogador avance para a próxima fase da investigação de forma fluida e criando uma experiência mais interativa e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
     }
-
     return actions;// Retorna a lista de ações disponíveis para o jogador com base no estado atual do jogo, permitindo que o jogador veja apenas as opções relevantes para a investigação e criando uma experiência mais fluida e envolvente para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
   }
-
 }
