@@ -1,14 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../realtime_service.dart'; 
 import 'package:provider/provider.dart';
-import '../../models/game_state.dart';
-import 'ceaab_screns.dart';
+import '../../models/game_state.dart'; 
+import 'ceaab_screens.dart'; 
 import 'auditorio_screen.dart';
 import 'biblioteca_screen.dart';
 import 'manacas.dart';
 import 'praca_alimentacao_screen.dart';
-
 class AmbientesScreen extends StatelessWidget {
-  const AmbientesScreen({super.key});
+  final int faseInicial;
+  const AmbientesScreen({super.key, this.faseInicial = 1});
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +89,20 @@ class AmbientesScreen extends StatelessWidget {
     );
   }
 
-  void _navegarParaAmbiente(BuildContext context, ambiente) {
+  void _navegarParaAmbiente(BuildContext context, ambiente) async {
     // Pegamos o ID e forçamos a virar String para não dar erro
-    final String idSeguro = ambiente.id.toString(); 
+    final String idSeguro = ambiente.id.toString();
+
+    try{
+      final String? userId = FirebaseAuth.instance.currentUser?.uid;
+      final int? faseInt = int.tryParse(idSeguro);
+      if(userId != null && faseInt != null){
+        await RealtimeService().salvarProgresso(userId, faseInt);
+      }
+    } catch (e) {
+      debugPrint("⚠️ Erro ao navegar para o ambiente: $e"); 
+    }
+    if (!context.mounted) return;
 
     switch (idSeguro) {
       case '1':
@@ -114,7 +127,7 @@ class AmbientesScreen extends StatelessWidget {
         break;
       case '5':
         Navigator.of(context).push(
-          // O erro do const estava aqui! Removido.
+          
           MaterialPageRoute(builder: (_) => ManacasScreen()),
         );
         break;

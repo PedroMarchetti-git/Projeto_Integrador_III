@@ -9,7 +9,7 @@ class RealtimeService {
     try {
       DatabaseReference ref = _db.ref("usuarios/$userId");
       await ref.set({
-        "fase_atual": faseAtual,
+        "fase_atual": faseAtual,  
         "ultima_atualizacao": ServerValue.timestamp,
       });
     } catch (e) {
@@ -19,6 +19,6 @@ class RealtimeService {
 
   // Função para ouvir a fase em tempo real
   Stream<DatabaseEvent> escutarProgresso(String userId) {
-    return _db.ref("usuarios/$userId/fase_atual").onValue;
+    return _db.ref("usuarios/$userId").onValue;
   }
 }
