@@ -77,7 +77,7 @@ void _checkUnlockManacas(GameState gameState) { // Função para verificar se o 
         currentDialogue += "\n\n[SISTEMA]: Você coletou todas as pistas do CEAAB! O acesso a Manacás foi liberado."; // Atualiza o diálogo central do jogo para informar ao jogador que todas as pistas do CEAAB foram coletadas e que o acesso a Manacás foi liberado, incentivando o jogador a avançar para a próxima fase da investigação.
       }
     }
-  }
+  } 
 
   @override
   Widget build(BuildContext context) { // Sobrescreve o método build para construir a interface do usuário da tela do CEAAB, onde o jogador pode ver o ambiente, as ações disponíveis, as pistas coletadas e interagir com os elementos do jogo para avançar na investigação.
@@ -93,7 +93,7 @@ void _checkUnlockManacas(GameState gameState) { // Função para verificar se o 
         children: [ // Define os filhos do Stack, que incluem a imagem de fundo do CEAAB, uma camada escura para dar contraste ao texto do jogo e a interface do jogo por cima do fundo, criando uma experiência visual imersiva e estilizada para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
           Positioned.fill( // Utiliza Positioned.fill para garantir que a imagem de fundo do CEAAB ocupe toda a área disponível da tela, criando uma experiência visual imersiva para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
             child: Image.asset( // Exibe a imagem de fundo do CEAAB, que é uma representação visual do ambiente onde o jogador está investigando, criando uma experiência imersiva e estilizada para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
-              'assets/images/ceaab.jpeg', // Define o caminho da imagem de fundo do CEAAB, que deve estar localizada na pasta assets/images do projeto, garantindo que a imagem seja carregada corretamente e exibida como plano de fundo da tela do CEAAB.
+              'assets/images/caab.jpeg', // Define o caminho da imagem de fundo do CEAAB, que deve estar localizada na pasta assets/images do projeto, garantindo que a imagem seja carregada corretamente e exibida como plano de fundo da tela do CEAAB.
               fit: BoxFit.cover, // Define o ajuste da imagem para cobrir toda a área disponível, garantindo que a imagem de fundo do CEAAB seja exibida de forma completa e proporcional, criando uma experiência visual imersiva para o jogador enquanto explora o ambiente e interage com os elementos do jogo.
             ),
           ),

@@ -119,7 +119,7 @@ final List<Pista> pistasPracaAlimentacao = [
 ];
 
 // ==========================================
-// 3. INTERFACE VISUAL SEM REDUNDÂNCIA DE GPS
+// 3. INTERFACE VISUAL
 // ==========================================
 class PracaAlimentacaoScreen extends StatefulWidget {
   const PracaAlimentacaoScreen({super.key});
@@ -169,140 +169,204 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Investigação: Praça de Alimentação'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.green.shade800,
         foregroundColor: Colors.white,
       ),
-      // Pulamos direto para o conteúdo, sem a tela de carregamento!
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Card do Local
-            Card(
-              elevation: 4,
-              color: Colors.green.shade50,
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Praça de Alimentação', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green)),
-                    SizedBox(height: 4),
-                    Text('📍 Área central do Campus I da PUC-Campinas, próxima à entrada principal.', style: TextStyle(color: Colors.black54)),
-                    SizedBox(height: 8),
-                    Text('Ambiente amplo, dinâmico e altamente movimentado, localizado no coração do Campus I da PUC-Campinas. O local possui grande circulação de estudantes, professores e visitantes ao longo do dia, sendo um dos principais pontos de convivência da universidade.'),
-                  ],
-                ),
-              ),
+      // STACK para colocar a imagem de fundo e o conteúdo por cima
+      body: Stack(
+        children: [
+          // IMAGEM DE FUNDO GLOBAL
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/praca_de_alimentacao.jpeg', // Seu arquivo de imagem
+              fit: BoxFit.cover,
+              color: Colors.black.withOpacity(0.6), // Película escura para dar contraste
+              colorBlendMode: BlendMode.darken,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(color: const Color(0xFF1E1E1E)); // Fundo escuro de emergência
+              },
             ),
-            const SizedBox(height: 20),
-
-            // Balão de Diálogo
-            if (_npcAtivo != null) ...[
-              Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(side: const BorderSide(color: Colors.green, width: 2), borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+          
+          // CONTEÚDO ROLÁVEL
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Card do Local (Levemente transparente com letras escuras)
+                  Card(
+                    elevation: 8,
+                    color: Colors.green.shade50.withOpacity(0.95),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${_npcAtivo!.nomeNPC} (${_npcAtivo!.papel})', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
-                          IconButton(icon: const Icon(Icons.close, color: Colors.red), onPressed: _fecharConversa),
+                          Text(
+                            'Praça de Alimentação', 
+                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green)
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            '📍 Área central do Campus I da PUC-Campinas, próxima à entrada principal.', 
+                            style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600) // COR CORRIGIDA
+                          ),
+                          SizedBox(height: 12),
+                          Text(
+                            'Ambiente amplo, dinâmico e altamente movimentado, localizado no coração do Campus I da PUC-Campinas. O local possui grande circulação de estudantes, professores e visitantes ao longo do dia, sendo um dos principais pontos de convivência da universidade.',
+                            style: TextStyle(color: Colors.black87, fontSize: 15, height: 1.4), // COR CORRIGIDA
+                          ),
                         ],
                       ),
-                      const Divider(),
-                      Text(_falaExibida, style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
-                      const SizedBox(height: 16),
-                      ..._npcAtivo!.escolhas.map((escolha) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white, backgroundColor: Colors.green.shade700,
-                              minimumSize: const Size.fromHeight(40),
-                            ),
-                            onPressed: () => _processarEscolha(escolha),
-                            child: Text(escolha.texto),
-                          ),
-                        );
-                      }),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ] else ...[
-              // NPCs livres
-              const Text('Pessoas disponíveis na Praça:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              ...dialogosPracaAlimentacao.map((npc) {
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: const Icon(Icons.person, color: Colors.green),
-                    title: Text(npc.nomeNPC),
-                    subtitle: Text(npc.papel),
-                    trailing: const Icon(Icons.chat, color: Colors.green),
-                    onTap: () => _iniciarConversa(npc),
-                  ),
-                );
-              }),
-              const SizedBox(height: 20),
-            ],
+                  const SizedBox(height: 20),
 
-            // Caderno de Pistas
-            const Text('Caderno de Pistas:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            _pistasColetadas.isEmpty
-                ? const Text('Nenhuma pista coletada ainda. Converse com os NPCs!')
-                : Column(
-                    children: _pistasColetadas.map((pistaNome) {
-                      final pistaOriginal = pistasPracaAlimentacao.firstWhere((p) => p.titulo == pistaNome);
+                  // Balão de Diálogo
+                  if (_npcAtivo != null) ...[
+                    Card(
+                      color: Colors.white.withOpacity(0.95),
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(side: BorderSide(color: Colors.green.shade700, width: 2), borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${_npcAtivo!.nomeNPC} (${_npcAtivo!.papel})', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green.shade800)),
+                                IconButton(icon: const Icon(Icons.close, color: Colors.red), onPressed: _fecharConversa),
+                              ],
+                            ),
+                            const Divider(color: Colors.grey),
+                            // COR CORRIGIDA NA FALA
+                            Text(_falaExibida, style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: Colors.black87)),
+                            const SizedBox(height: 16),
+                            ..._npcAtivo!.escolhas.map((escolha) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white, 
+                                    backgroundColor: Colors.green.shade700,
+                                    minimumSize: const Size.fromHeight(45),
+                                  ),
+                                  onPressed: () => _processarEscolha(escolha),
+                                  child: Text(escolha.texto, textAlign: TextAlign.center),
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ] else ...[
+                    // NPCs livres
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      color: Colors.black54, // Fundo escuro para destacar o título
+                      child: const Text('Pessoas disponíveis na Praça:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                    ),
+                    const SizedBox(height: 10),
+                    ...dialogosPracaAlimentacao.map((npc) {
                       return Card(
-                        color: Colors.amber.shade50,
+                        elevation: 4,
+                        margin: const EdgeInsets.only(bottom: 8),
+                        color: const Color(0xFF2C2C2C).withOpacity(0.95), // Cartão escuro para NPCs
                         child: ListTile(
-                          leading: const Icon(Icons.search, color: Colors.amber),
-                          title: Text(pistaOriginal.titulo),
-                          subtitle: Text('${pistaOriginal.tipo}: ${pistaOriginal.descricao}'),
+                          leading: const Icon(Icons.person, color: Colors.greenAccent),
+                          title: Text(npc.nomeNPC, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          subtitle: Text(npc.papel, style: const TextStyle(color: Colors.white70)),
+                          trailing: const Icon(Icons.chat, color: Colors.greenAccent),
+                          onTap: () => _iniciarConversa(npc),
                         ),
                       );
-                    }).toList(),
-                  ),
-            const SizedBox(height: 25),
-
-            // Mensagem de Desbloqueio e Botão de Finalizar
-            if (_missaoConcluida)
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: Colors.blue.shade50, border: Border.all(color: Colors.blue.shade700, width: 2), borderRadius: BorderRadius.circular(8)),
-                child: Column(
-                  children: [
-                    const Text('✨ Investigação Concluída! ✨', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Com as informações coletadas na praça de alimentação, você já pode avançar para o próximo ambiente.',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                      onPressed: () {
-                        // CHAMA O GAMESTATE PARA CONCLUIR A FASE GLOBALMENTE E LIBERAR O PRÓXIMO LUGAR
-                        context.read<GameState>().desbloquearAmbiente();
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Finalizar Investigação desta Sala', style: TextStyle(color: Colors.white)),
-                    )
+                    }),
+                    const SizedBox(height: 20),
                   ],
-                ),
+
+                  // Caderno de Pistas
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    color: Colors.black54,
+                    child: const Text('Caderno de Pistas:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                  ),
+                  const SizedBox(height: 10),
+                  _pistasColetadas.isEmpty
+                      ? Card(
+                          color: Colors.black.withOpacity(0.6),
+                          child: const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text('Nenhuma pista coletada ainda. Converse com os NPCs!', style: TextStyle(color: Colors.white70), textAlign: TextAlign.center),
+                          ),
+                        )
+                      : Column(
+                          children: _pistasColetadas.map((pistaNome) {
+                            // Proteção extra com orElse para evitar quebra de tela
+                            final pistaOriginal = pistasPracaAlimentacao.firstWhere(
+                              (p) => p.titulo == pistaNome,
+                              orElse: () => Pista(id: 999, titulo: pistaNome, descricao: 'Erro', tipo: 'Erro')
+                            );
+                            return Card(
+                              elevation: 4,
+                              color: Colors.amber.shade50.withOpacity(0.95),
+                              child: ListTile(
+                                leading: const Icon(Icons.search, color: Colors.amber),
+                                // CORES CORRIGIDAS NAS PISTAS
+                                title: Text(pistaOriginal.titulo, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)),
+                                subtitle: Text('${pistaOriginal.tipo}: ${pistaOriginal.descricao}', style: const TextStyle(color: Colors.black54)),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                  const SizedBox(height: 25),
+
+                  // Mensagem de Desbloqueio e Botão de Finalizar
+                  if (_missaoConcluida)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50.withOpacity(0.95), 
+                        border: Border.all(color: Colors.blue.shade700, width: 2), 
+                        borderRadius: BorderRadius.circular(12)
+                      ),
+                      child: Column(
+                        children: [
+                          const Text('✨ Investigação Concluída! ✨', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue)),
+                          const SizedBox(height: 8),
+                          // COR CORRIGIDA NA MENSAGEM FINAL
+                          const Text(
+                            'Com as informações coletadas na praça de alimentação, você já pode avançar para o próximo ambiente.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.black87, fontSize: 15),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue.shade700,
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size.fromHeight(50)
+                            ),
+                            onPressed: () {
+                              context.read<GameState>().desbloquearAmbiente();
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Finalizar Investigação desta Sala', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          )
+                        ],
+                      ),
+                    ),
+                ],
               ),
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
