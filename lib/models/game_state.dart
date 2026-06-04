@@ -1,6 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import '../models/ambiente.dart';
 import '../data/ambientes_mock.dart';
 
@@ -9,6 +10,15 @@ class GameState extends ChangeNotifier {
   final Set<String> _clues = {};
   final Set<String> _interactions = {};
   final Set<String> _visitedLocations = {};
+
+// ==========================================
+// SISTEMA GLOBAL DE ÁUDIO
+// ==========================================
+final AudioPlayer _bgmPlayer = AudioPlayer();
+bool _isMuted = false; 
+
+// Permite que as telas saibam se está mudo para mudar o ícone
+bool get isMuted => _isMuted;
 
   // Tokens
   bool hasToken(String token) => _tokens.contains(token);
@@ -53,6 +63,7 @@ class GameState extends ChangeNotifier {
   GameState() {
     _listaDeAmbientes = List.from(ambientes); 
     _iniciarMonitoramentoGPS(); 
+    _iniciarMusicaGlobal();
   }
 
   // Retorna qual ambiente o jogador deve ir agora (o primeiro ainda trancado)
@@ -140,8 +151,24 @@ void _iniciarMonitoramentoGPS() async {
     }
   }
 
+void _iniciarMusicaGlobal() async {
+    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
+    await _bgmPlayer.play(AssetSource('audios/A_Periment_of_Breath.mp3'));
+  }
+
+  void alternarMutarMusica() {
+    _isMuted = !_isMuted; // Inverte o estado (se era falso, vira verdadeiro)
+    if (_isMuted) {
+      _bgmPlayer.pause(); // Se mutou, pausa a música
+    } else {
+      _bgmPlayer.resume(); // Se desmutou, volta a tocar de onde parou
+    }
+    notifyListeners(); // Avisa as telas para trocarem o ícone do botão
+  }
+
   @override
   void dispose() {
+    _bgmPlayer.dispose();
     _gpsSubscription?.cancel();
     super.dispose();
   }

@@ -51,7 +51,12 @@ class _BibliotecaScreenState extends State<BibliotecaScreen> {
       ),
       body: Stack(
         children: [
-          Container(color: const Color(0xFF1E1E1E)),
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/biblioteca.png",
+              fit: BoxFit.cover,
+            ),
+          ),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16),

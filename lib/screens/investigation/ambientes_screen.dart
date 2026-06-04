@@ -6,7 +6,7 @@ import '../../models/game_state.dart';
 import 'ceaab_screens.dart'; 
 import 'auditorio_screen.dart';
 import 'biblioteca_screen.dart';
-import 'manacas.dart';
+import 'manacas_screen.dart';
 import 'praca_alimentacao_screen.dart';
 class AmbientesScreen extends StatelessWidget {
   final int faseInicial;
@@ -14,7 +14,7 @@ class AmbientesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gameState = context.watch<GameState>();
+    final gameState = Provider.of<GameState>(context);
 
     int indexAtual = gameState.todosAmbientes.indexWhere((a) => !a.desbloqueado);
     if (indexAtual == -1) indexAtual = gameState.todosAmbientes.length;
@@ -27,6 +27,25 @@ class AmbientesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Ambientes"),
+        backgroundColor: Colors.black87, 
+        foregroundColor: Colors.white,
+        // ==========================================
+        // BOTÃO DE MUTAR A MÚSICA GLOBAL
+        // ==========================================
+        actions: [
+          IconButton(
+            // Se isMuted for verdadeiro, mostra ícone cortado. Senão, alto-falante ligado.
+            icon: Icon(
+              gameState.isMuted ? Icons.volume_off : Icons.volume_up,
+              color: Colors.amberAccent, // Uma cor de destaque legal
+            ),
+            onPressed: () {
+              // Chama a função que criamos no GameState
+              gameState.alternarMutarMusica();
+            },
+            tooltip: 'Ligar/Desligar Música', // Ajuda de acessibilidade
+          ),
+        ],
       ),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -127,8 +146,7 @@ class AmbientesScreen extends StatelessWidget {
         break;
       case '5':
         Navigator.of(context).push(
-          
-          MaterialPageRoute(builder: (_) => ManacasScreen()),
+          MaterialPageRoute(builder: (_) => const ManacasScreen()),
         );
         break;
       default:
