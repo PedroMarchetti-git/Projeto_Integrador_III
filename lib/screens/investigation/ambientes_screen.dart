@@ -37,7 +37,7 @@ class AmbientesScreen extends StatelessWidget {
             // Se isMuted for verdadeiro, mostra ícone cortado. Senão, alto-falante ligado.
             icon: Icon(
               gameState.isMuted ? Icons.volume_off : Icons.volume_up,
-              color: Colors.amberAccent, // Uma cor de destaque legal
+              color: const Color.fromARGB(255, 255, 255, 255), // Uma cor de destaque legal
             ),
             onPressed: () {
               // Chama a função que criamos no GameState
@@ -63,7 +63,6 @@ class AmbientesScreen extends StatelessWidget {
           }
 
           // 4. Interface gráfica com o cadeado reativo
-          // 4. Interface gráfica com o cadeado reativo
           return Card(
             color: const Color(0xFF1E1E1E), // Cor escura do seu layout
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -86,7 +85,6 @@ class AmbientesScreen extends StatelessWidget {
                 color: cadeadoAberto ? Colors.greenAccent : Colors.redAccent,
                 size: 28,
               ),
-              // === NOVA LÓGICA DE CLIQUE AQUI ===
               onTap: () {
                 if (cadeadoAberto) {
                   // Se o cadeado está verde, viaja para a tela

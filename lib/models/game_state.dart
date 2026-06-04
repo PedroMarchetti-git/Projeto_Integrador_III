@@ -131,7 +131,6 @@ void _iniciarMonitoramentoGPS() async {
     return _ultimaDistancia! <= 70.0; 
   }
 
-  // NOVA FUNÇÃO: O detetive que nos dirá o que está dando errado
   String obterMotivoBloqueio() {
     if (_posicaoAtual == null) {
       return "Aguardando sinal do satélite GPS... Vá para um local aberto.";
@@ -141,6 +140,7 @@ void _iniciarMonitoramentoGPS() async {
     }
     return "Calculando rota...";
   }
+
   // Conclui o ambiente atual
   void desbloquearAmbiente() {
     final atual = ambienteAtual;
@@ -151,19 +151,30 @@ void _iniciarMonitoramentoGPS() async {
     }
   }
 
-void _iniciarMusicaGlobal() async {
-    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
-    await _bgmPlayer.play(AssetSource('audios/A_Periment_of_Breath.mp3'));
+  // ==========================================
+  // FUNÇÕES DE ÁUDIO ATUALIZADAS PARA O CHROME
+  // ==========================================
+  void _iniciarMusicaGlobal() async {
+    try {
+      await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
+      await _bgmPlayer.play(AssetSource('audios/A_Perimeter_of_Breath.mp3'));
+    } catch (e) {
+      debugPrint("📢 ÁUDIO: Navegador bloqueou autoplay. Aguardando interação do usuário.");
+    }
   }
 
-  void alternarMutarMusica() {
-    _isMuted = !_isMuted; // Inverte o estado (se era falso, vira verdadeiro)
+  void alternarMutarMusica() async {
+    _isMuted = !_isMuted;
     if (_isMuted) {
-      _bgmPlayer.pause(); // Se mutou, pausa a música
+      await _bgmPlayer.pause(); 
     } else {
-      _bgmPlayer.resume(); // Se desmutou, volta a tocar de onde parou
+      try {
+        await _bgmPlayer.resume();
+      } catch (e) {
+        await _bgmPlayer.play(AssetSource('audios/A_Perimeter_of_Breath.mp3'));
+      }
     }
-    notifyListeners(); // Avisa as telas para trocarem o ícone do botão
+    notifyListeners();
   }
 
   @override
