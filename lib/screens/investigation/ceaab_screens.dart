@@ -90,7 +90,7 @@ class _CeaabScreenState extends State<CeaabScreen> {
           // 2. Película escura para dar contraste ao texto
           Positioned.fill( 
             child: Container( 
-              color: Colors.black.withOpacity(0.35), 
+              color: Colors.black.withValues(alpha: 0.35), 
             ),
           ),
           
@@ -146,7 +146,7 @@ class _CeaabScreenState extends State<CeaabScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.green.shade50.withOpacity(0.95), 
+                        color: Colors.green.shade50.withValues(alpha: 0.95), 
                         border: Border.all(color: Colors.green.shade700, width: 2), 
                         borderRadius: BorderRadius.circular(12)
                       ),
