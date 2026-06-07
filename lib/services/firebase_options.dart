@@ -39,15 +39,15 @@ class DefaultFirebaseOptions {
         );
     }
   }
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC0JvsShHzMmpJ9m7wn-HpqLEJepGu3KAA',
-    appId: '1:420337132658:web:245d44337d293a931c0eeb',
-    messagingSenderId: '420337132658',
-    projectId: 'projeto-integrador-iii-2ff26',
-    authDomain: 'projeto-integrador-iii-2ff26.firebaseapp.com',
-    storageBucket: 'projeto-integrador-iii-2ff26.firebasestorage.app',
-    measurementId: 'G-Y91CMDWCLE',
+   static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAiBQP74iC_c06XqsVAIWcg2RQLb0k8s3I', 
+    appId: '1:307031613459:web:eaff304b6a3ab3772a9fe6', 
+    messagingSenderId: '307031613459', 
+    projectId: 'pi3-rpg', 
+    authDomain: '://firebaseapp.com', 
+    storageBucket: 'pi3-rpg.firebasestorage.app', 
+    databaseURL: 'https://pi3-rpg-default-rtdb.firebaseio.com/', 
+    measurementId: 'G-5CLYCEYP1M', 
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -56,6 +56,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '420337132658',
     projectId: 'projeto-integrador-iii-2ff26',
     storageBucket: 'projeto-integrador-iii-2ff26.firebasestorage.app',
+    authDomain: '://firebaseapp.com',
+    databaseURL: 'https://projeto-integrador-iii-2ff26-default-rtdb.firebaseio.com/',
+
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -81,7 +84,8 @@ class DefaultFirebaseOptions {
     appId: '1:420337132658:web:817ddfaef4bd35ec1c0eeb',
     messagingSenderId: '420337132658',
     projectId: 'projeto-integrador-iii-2ff26',
-    authDomain: 'projeto-integrador-iii-2ff26.firebaseapp.com',
+    authDomain: '://firebaseapp.com',
+    databaseURL: 'https://projeto-integrador-iii-2ff26-default-rtdb.firebaseio.com/',
     storageBucket: 'projeto-integrador-iii-2ff26.firebasestorage.app',
     measurementId: 'G-L382KT0GYK',
   );
