@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart'; // PACOTE DE ÁUDIO
-import '../../models/game_state.dart';
+//import '../../models/game_state.dart';
+//import '../../realtime_service.dart';
 
 class ManacasScreen extends StatefulWidget {
   const ManacasScreen({super.key});
 
   @override
-  _ManacasScreenState createState() => _ManacasScreenState();
+  State<ManacasScreen> createState() => _ManacasScreenState();
 }
-
 class _ManacasScreenState extends State<ManacasScreen> {
   // === CONFIGURAÇÃO DO ÁUDIO ===
   late AudioPlayer _audioPlayer;
@@ -141,7 +141,7 @@ class _ManacasScreenState extends State<ManacasScreen> {
             child: Image.asset("assets/images/manacas.jpeg", fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.75)), // Mais escuro para focar no texto
+            child: Container(color: Colors.black.withValues()), // Mais escuro para focar no texto
           ),
           SafeArea(
             child: SingleChildScrollView(
@@ -154,7 +154,7 @@ class _ManacasScreenState extends State<ManacasScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade900.withOpacity(0.9),
+                      color: Colors.blueGrey.shade900.withValues(),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.amberAccent.shade400, width: 1),
                     ),
@@ -175,7 +175,7 @@ class _ManacasScreenState extends State<ManacasScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1924).withOpacity(0.85),
+                      color: const Color(0xFF1C1924).withValues(),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.white12),
                     ),
@@ -193,8 +193,8 @@ class _ManacasScreenState extends State<ManacasScreen> {
                       padding: const EdgeInsets.only(bottom: 12.0),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isSelected ? Colors.red.shade800 : const Color(0xFF262230).withOpacity(0.9),
-                          disabledBackgroundColor: const Color(0xFF16141C).withOpacity(0.9),
+                          backgroundColor: isSelected ? Colors.red.shade800 : const Color(0xFF262230).withValues(),
+                          disabledBackgroundColor: const Color(0xFF16141C).withValues(),
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -216,7 +216,6 @@ class _ManacasScreenState extends State<ManacasScreen> {
                   }),
                   
                   const SizedBox(height: 20),
-                  
                   if (npcsSelecionados.length == 2 && !jogoFinalizado)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(

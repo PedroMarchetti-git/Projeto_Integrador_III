@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import para pegar o ID do usuário
-import 'package:firebase_database/firebase_database.dart'; // Import do Firebase Database
+//import 'package:firebase_database/firebase_database.dart'; // Import do Firebase Database
 import '../screens/investigation/ambientes_screen.dart'; // Import da tela de ambientes
 import '../realtime_service.dart'; // Import do serviço de Realtime Database
  // Import do seu serviço
@@ -12,7 +12,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // 1. Buscamos o ID do usuário logado e instanciamos o serviço
     final String? userId = FirebaseAuth.instance.currentUser?.uid;
-    final RealtimeService realtimeService = RealtimeService();
 
     return Scaffold(
       appBar: AppBar(
@@ -36,21 +35,17 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // 2. INÍCIO DO STREAMBUILDER (PASSO 2)
+            //INÍCIO DO STREAMBUILDER
             if (userId != null)
-              StreamBuilder<DatabaseEvent>(
-                stream: realtimeService.escutarProgresso(userId),
+              FutureBuilder<Map<String, dynamic>?>(
+                future: RealtimeService.obterProgresso(userId),
                 builder: (context, snapshot) {
-                  // Valor padrão caso o usuário não tenha nenhum progresso salvo ainda
                   int faseSalvaNoFirebase = 1;
 
-                  if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
-                    final Map<dynamic, dynamic> dados = 
-                        snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+                  if (snapshot.hasData && snapshot.data != null) {
+                    final dados = snapshot.data!; 
                     faseSalvaNoFirebase = dados['fase_atual'] ?? 1;
                   }
-
-                  // Criamos a interface com base no dado carregado
                   return Column(
                     children: [
                       Text(

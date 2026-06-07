@@ -110,11 +110,19 @@ class AmbientesScreen extends StatelessWidget {
     // Pegamos o ID e forçamos a virar String para não dar erro
     final String idSeguro = ambiente.id.toString();
 
+      String nomeAmbiente;
+  switch (idSeguro) {
+    case '1': nomeAmbiente = 'auditorio'; break;
+    case '2': nomeAmbiente = 'biblioteca'; break;
+    case '3': nomeAmbiente = 'praca_alimentacao'; break;
+    case '4': nomeAmbiente = 'ceaab'; break;
+    default: nomeAmbiente = 'desconhecido';
+  }
     try{
       final String? userId = FirebaseAuth.instance.currentUser?.uid;
       final int? faseInt = int.tryParse(idSeguro);
       if(userId != null && faseInt != null){
-        await RealtimeService().salvarProgresso(userId, faseInt);
+        await RealtimeService.salvarProgresso(userId, faseInt, nomeAmbiente);
       }
     } catch (e) {
       debugPrint("⚠️ Erro ao navegar para o ambiente: $e"); 

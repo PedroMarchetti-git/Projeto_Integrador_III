@@ -11,7 +11,7 @@ class ClueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.black.withOpacity(0.85),
+      color: Colors.black.withValues(),
 
       margin: const EdgeInsets.symmetric(vertical: 6),
 

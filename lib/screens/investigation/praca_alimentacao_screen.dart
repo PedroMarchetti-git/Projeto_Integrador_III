@@ -180,7 +180,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
             child: Image.asset(
               'assets/images/praca_de_alimentacao.jpeg', // Seu arquivo de imagem
               fit: BoxFit.cover,
-              color: Colors.black.withOpacity(0.6), // Película escura para dar contraste
+              color: Colors.black.withValues(), // Película escura para dar contraste
               colorBlendMode: BlendMode.darken,
               errorBuilder: (context, error, stackTrace) {
                 return Container(color: const Color(0xFF1E1E1E)); // Fundo escuro de emergência
@@ -198,7 +198,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
                   // Card do Local (Levemente transparente com letras escuras)
                   Card(
                     elevation: 8,
-                    color: Colors.green.shade50.withOpacity(0.95),
+                    color: Colors.green.shade50.withValues(),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: const Padding(
                       padding: EdgeInsets.all(16.0),
@@ -228,7 +228,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
                   // Balão de Diálogo
                   if (_npcAtivo != null) ...[
                     Card(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withValues(),
                       elevation: 8,
                       shape: RoundedRectangleBorder(side: BorderSide(color: Colors.green.shade700, width: 2), borderRadius: BorderRadius.circular(12)),
                       child: Padding(
@@ -278,7 +278,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
                       return Card(
                         elevation: 4,
                         margin: const EdgeInsets.only(bottom: 8),
-                        color: const Color(0xFF2C2C2C).withOpacity(0.95), // Cartão escuro para NPCs
+                        color: const Color(0xFF2C2C2C).withValues(), // Cartão escuro para NPCs
                         child: ListTile(
                           leading: const Icon(Icons.person, color: Colors.greenAccent),
                           title: Text(npc.nomeNPC, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -300,7 +300,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
                   const SizedBox(height: 10),
                   _pistasColetadas.isEmpty
                       ? Card(
-                          color: Colors.black.withOpacity(0.6),
+                          color: Colors.black.withValues(),
                           child: const Padding(
                             padding: EdgeInsets.all(16.0),
                             child: Text('Nenhuma pista coletada ainda. Converse com os NPCs!', style: TextStyle(color: Colors.white70), textAlign: TextAlign.center),
@@ -315,7 +315,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
                             );
                             return Card(
                               elevation: 4,
-                              color: Colors.amber.shade50.withOpacity(0.95),
+                              color: Colors.amber.shade50.withValues(),
                               child: ListTile(
                                 leading: const Icon(Icons.search, color: Colors.amber),
                                 // CORES CORRIGIDAS NAS PISTAS
@@ -332,7 +332,7 @@ class _PracaAlimentacaoScreenState extends State<PracaAlimentacaoScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.blue.shade50.withOpacity(0.95), 
+                        color: Colors.blue.shade50.withValues(), 
                         border: Border.all(color: Colors.blue.shade700, width: 2), 
                         borderRadius: BorderRadius.circular(12)
                       ),
