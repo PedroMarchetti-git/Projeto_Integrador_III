@@ -1,0 +1,148 @@
+{
+  "ambientes": {
+    "auditorio": {
+      "id": 1,
+      "nome": "Auditório (Cena do Crime)",
+      "descricao": "O Auditório está isolado, mas com sinais evidentes de movimentação e desordem: cadeiras desalinhadas, microfones fora de posição, cabos desconectados e luzes piscando intermitentemente.",
+      "coordenadas": { "latitude": -22.832833, "longitude": -47.052566, "raio_metros": 30 }
+    },
+    "biblioteca": {
+      "id": 2,
+      "nome": "Biblioteca Central",
+      "descricao": "Corredores infinitos de livros cercam você. O silêncio é quase absoluto, interrompido apenas pelo som distante de páginas virando. O assassino pode ter passado por aqui para esconder alguma prova entre as milhares de prateleiras de livros.",
+      "coordenadas": { "latitude": -22.833897, "longitude": -47.051852, "raio_metros": 30 }
+    },
+    "praca_alimentacao": {
+      "id": 3,
+      "nome": "Praça de Alimentação",
+      "descricao": "A praça está estranhamente vazia para este horário. Mesas reviradas sugerem que as pessoas saíram às pressas quando o apagão começou.",
+      "coordenadas": { "latitude": -22.833096, "longitude": -47.052297, "raio_metros": 50 }
+    },
+    "ceaab": {
+      "id": 4,
+      "nome": "Centro de Estudos Africanos e Afro-Brasileiros",
+      "descricao": "A porta do CEAAB está encostada. Uma caneca de café ainda quente sobre a mesa indica que alguém esteve aqui recentemente acompanhando os passos da sua investigação.",
+      "coordenadas": { "latitude": -22.833763, "longitude": -47.051906, "raio_metros": 30 }
+    },
+    "manacas": {
+      "id": 5,
+      "nome": "Pátio dos Manacás (Conclusão)",
+      "descricao": "O pátio aberto e escuro. As sombras das árvores de Manacá escondem o desfecho desta investigação. O culpado está encurralado aqui.",
+      "coordenadas": { "latitude": -22.832446, "longitude": -47.051259, "raio_metros": 30 }
+    }
+  },
+  "interacoes": {
+    "auditorio_pista_1": {
+      "id": "auditorio_pista_1",
+      "ambiente_id": "auditorio",
+      "texto_narrativo": "[AUDITÓRIO - PISTA 1/3] Próximo ao corpo, você encontra óculos quebrados que claramente não pertenciam à vítima. Alguém lutou aqui no escuro.",
+      "escolhas": { "opcao_1": { "texto": "Procurar perto do palco", "proxima_interacao_id": "auditorio_pista_2", "proximo_ambiente_id": "auditorio", "altera_fase_para": 1 } }
+    },
+    "auditorio_pista_2": {
+      "id": "auditorio_pista_2",
+      "ambiente_id": "auditorio",
+      "texto_narrativo": "[AUDITÓRIO - PISTA 2/3] Atrás das cortinas do palco, há marcas de passos sujos de barro saindo em direção à porta lateral.",
+      "escolhas": { "opcao_1": { "texto": "Revistar as vestes da vítima", "proxima_interacao_id": "auditorio_pista_3", "proximo_ambiente_id": "auditorio", "altera_fase_para": 1 } }
+    },
+    "auditorio_pista_3": {
+      "id": "auditorio_pista_3",
+      "ambiente_id": "auditorio",
+      "texto_narrativo": "[AUDITÓRIO - PISTA 3/3 GATILHO] No bolso da vítima, você acha um cartão de acesso com sangue da Biblioteca Central registrado minutos antes do blecaute. O Auditório está limpo.",
+      "escolhas": { "opcao_1": { "texto": "Liberar Biblioteca e ir investigar", "proxima_interacao_id": "biblioteca_pista_1", "proximo_ambiente_id": "biblioteca", "altera_fase_para": 2 } }
+    },
+
+    "biblioteca_pista_1": {
+      "id": "biblioteca_pista_1",
+      "ambiente_id": "biblioteca",
+      "texto_narrativo": "[BIBLIOTECA - PISTA 1/3] No terminal de computadores da Biblioteca, você nota que a última sessão foi encerrada às pressas usando a conta de um professor suspeito.",
+      "escolhas": { "opcao_1": { "texto": "Vasculhar o corredor de livros indicado no histórico", "proxima_interacao_id": "biblioteca_pista_2", "proximo_ambiente_id": "biblioteca", "altera_fase_para": 2 } }
+    },
+    "biblioteca_pista_2": {
+      "id": "biblioteca_pista_2",
+      "ambiente_id": "biblioteca",
+      "texto_narrativo": "[BIBLIOTECA - PISTA 2/3] Entre as prateleiras de história, você encontra um pano com cheiro de produto químico usado para limpar digitais.",
+      "escolhas": { "opcao_1": { "texto": "Verificar a lixeira do balcão", "proxima_interacao_id": "biblioteca_pista_3", "proximo_ambiente_id": "biblioteca", "altera_fase_para": 2 } }
+    },
+    "biblioteca_pista_3": {
+      "id": "biblioteca_pista_3",
+      "ambiente_id": "biblioteca",
+      "texto_narrativo": "[BIBLIOTECA - PISTA 3/3 GATILHO] Na lixeira, há um rascunho de relatório financeiro sobre desvios de verbas rasgado com o logotipo da Praça de Alimentação impresso no verso.",
+      "escolhas": { "opcao_1": { "texto": "Liberar Praça de Alimentação e ir investigar", "proxima_interacao_id": "praca_pista_1", "proximo_ambiente_id": "praca_alimentacao", "altera_fase_para": 3 } }
+    },
+
+    "praca_pista_1": {
+      "id": "praca_pista_1",
+      "ambiente_id": "praca_alimentacao",
+      "texto_narrativo": "[PRAÇA - PISTA 1/3] Sob uma mesa virada, você localiza o restante do relatório financeiro. Alguém tentou destruí-lo durante a correria do apagão.",
+      "escolhas": { "opcao_1": { "texto": "Investigar o balcão de atendimento abandonado", "proxima_interacao_id": "praca_pista_2", "proximo_ambiente_id": "praca_alimentacao", "altera_fase_para": 3 } }
+    },
+    "praca_pista_2": {
+      "id": "praca_pista_2",
+      "ambiente_id": "praca_alimentacao",
+      "texto_narrativo": "[PRAÇA - PISTA 2/3] O funcionário da praça diz que viu um homem correndo com uma lanterna tática em direção aos blocos de aulas assim que as luzes apagaram.",
+      "escolhas": { "opcao_1": { "texto": "Procurar no chão perto da saída de emergência", "proxima_interacao_id": "praca_pista_3", "proximo_ambiente_id": "praca_alimentacao", "altera_fase_para": 3 } }
+    },
+    "praca_pista_3": {
+      "id": "praca_pista_3",
+      "ambiente_id": "praca_alimentacao",
+      "texto_narrativo": "[PRAÇA - PISTA 3/3 GATILHO] Perto da saída, você encontra um crachá funcional danificado pertencente a um docente lotado no CEAAB.",
+      "escolhas": { "opcao_1": { "texto": "Liberar CEAAB e ir encurralar o suspeito", "proxima_interacao_id": "ceaab_pista_1", "proximo_ambiente_id": "ceaab", "altera_fase_para": 4 } }
+    },
+
+    "ceaab_pista_1": { 
+  "id": "ceaab_pista_1", 
+  "ambiente_id": "ceaab", 
+  "texto_narrativo": "[CEAAB - PISTA 1/3] Atrás da obra de arte, você encontra um fundo falso na parede com marcas de poeira recente. Alguém escondeu algo aqui há pouco tempo.", 
+  "escolhas": null
+}, 
+"ceaab_pista_2": { 
+  "id": "ceaab_pista_2", 
+  "ambiente_id": "ceaab", 
+  "texto_narrativo": "[CEAAB - PISTA 2/3] Conversando com as pessoas no local, você descobre que a comendadora Edna viu o professor suspeito saindo apressado carregando uma mochila volumosa minutos antes do apagão.", 
+  "escolhas": null
+}, 
+"ceaab_pista_3": { 
+  "id": "ceaab_pista_3", 
+  "ambiente_id": "ceaab", 
+  "texto_narrativo": "[CEAAB - PISTA 3/3 GATILHO] 💻 Os computadores estão desligados devido ao apagão, mas você nota um pen-drive deixado em uma das portas USB com arquivos sobre o sistema elétrico e o mapa de fuga pelo Pátio dos Manacás!", 
+  "escolhas": { 
+    "opcao_1": { 
+      "texto": "Seguir para o Pátio dos Manacás", 
+      "proxima_interacao_id": "manacas_pista_1", 
+      "proximo_ambiente_id": "manacas", 
+      "altera_fase_para": 5 
+    },
+    "manacas_pista_1": {
+      "id": "manacas_pista_1",
+      "ambiente_id": "manacas",
+      "texto_narrativo": "[MANACÁS - PISTA 1/3] No pátio escuro, você encontra marcas de pneus de um carro que tentou sair apressado mas derrapou na grama.",
+      "escolhas": { "opcao_1": { "texto": "Seguir os rastros de passos na terra", "proxima_interacao_id": "manacas_pista_2", "proximo_ambiente_id": "manacas", "altera_fase_para": 5 } }
+    },
+    "manacas_pista_2": {
+      "id": "manacas_pista_2",
+      "ambiente_id": "manacas",
+      "texto_narrativo": "[MANACÁS - PISTA 2/3] Perto dos arbustos, você encontra uma camisa manchada jogada dentro de uma lixeira de jardim.",
+      "escolhas": { "opcao_1": { "texto": "Confrontar a silhueta parada perto do portão", "proxima_interacao_id": "manacas_final", "proximo_ambiente_id": "manacas", "altera_fase_para": 5 } }
+    },
+    "manacas_final": {
+      "id": "manacas_final",
+      "ambiente_id": "manacas",
+      "texto_narrativo": "[CASO RESOLVIDO] Você encurrala o professor! Confrontado com os óculos quebrados, o relatório de desvios e o diário, ele cai em prantos e confessa o crime. O mistério do assassinato no apagão da PUC foi solucionado!",
+      "escolhas": null
+    }
+  },
+  "jogadores": {
+    "K2TGRSRMo1ZjYXTXbbKeCDvyRfh2": {
+      "nome": "Nome do Aluno",
+      "email": "seu-email@puccampinas.edu.br"
+    }
+  },
+  "progresso": {
+    "K2TGRSRMo1ZjYXTXbbKeCDvyRfh2": {
+      "ambiente_atual_id": "auditorio",
+      "interacao_atual_id": "auditorio_pista_1",
+      "fase_atual": 1,
+      "ultima_atualizacao": 1780612351507
+    }
+  }
+}

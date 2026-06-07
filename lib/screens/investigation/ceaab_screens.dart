@@ -32,19 +32,16 @@ class _CeaabScreenState extends State<CeaabScreen> {
       currentDialogue = _getInitialDescription();
     });
   }
-
   // Salva o progresso do usuário no banco de dados do Firebase
   void _salvarFaseNoFirebase(int novaFase) async { 
     final User? usuarioAtual = FirebaseAuth.instance.currentUser;
-    if (usuarioAtual != null) { 
-      final realtimeService = RealtimeService();
-      await realtimeService.salvarProgresso(usuarioAtual.uid, novaFase);
+    if (usuarioAtual != null) {
+      await RealtimeService.salvarProgresso(usuarioAtual.uid, novaFase, 'ceaab');
       debugPrint("Progresso salvo no Firebase para a fase: $novaFase");
     } else {
       debugPrint("Nenhum usuário logado. Progresso não salvo.");
     }
   }
-
   // === LÓGICA DE VITÓRIA ===
   // Verifica se o jogador já pegou as 3 pistas necessárias
   void _verificarProgressoDasPistas() { 
@@ -109,7 +106,7 @@ class _CeaabScreenState extends State<CeaabScreen> {
                       color: Colors.black45, 
                       borderRadius: BorderRadius.circular(8), 
                     ),
-                    child: Text( 
+                    child: Text(
                       currentDialogue, 
                       style: const TextStyle(fontSize: 16.0, color: Colors.white, height: 1.4), 
                     ),
@@ -199,6 +196,8 @@ class _CeaabScreenState extends State<CeaabScreen> {
                               ),
                             );
                           },
+
+
                           child: ClueCard(clue: clue), 
                         )),
                   ],
@@ -211,16 +210,15 @@ class _CeaabScreenState extends State<CeaabScreen> {
     );
   }
 
-  // Textos e Diálogos do Jogo
-  String _getInitialDescription() { 
-    return "Você está no CAAB, o Centro de Estudo Africanos e AfroBrasileiros da PUC. "
-        "O ambiente é vibrante, com paredes coloridas e uma atmosfera de aprendizado e cultura. "
-        "Algumas estantes repletas de livros sobre história, cultura e arte afro-brasileira. "
-        "Há algumas pessoas e estudantes aqui, e você pode conversar com eles para obter informações. "
-        "As luzes suaves e as mesas cheias de papéis bagunçados que se espalharam durante o apagão, "
-        "sendo organizados pela comendadora responsável pelo CAAB.";
-  }
 
+  String _getInitialDescription(){
+    return "Você está no CEAAB, o Centro de Estudos Africanos e AfroBrasileiros."
+           "O ambiente é vibrante, com paredes coloridas e uma atmosfera de aprendizado e cultura."
+           "Algumas estantes repletas de artes sobre história, cultura e arte afro-brasileira."
+           "Há algumas pessoas estudando e você pode conversar com eles para obter informações."
+           "As luzes suaves e as mesas cheias de papéis bagunçados que se espalharam durante o apagão."
+           "Mesas sendo orgnizadas pela comendadora Edna.";
+  }
   // Gera a notificação na tela quando uma pista é encontrada
   void _showClueDiscoveryFeedback(String clue) { 
     var row = Row( 
@@ -249,54 +247,49 @@ class _CeaabScreenState extends State<CeaabScreen> {
   }
 
   // Motor principal: reage aos cliques nos botões de ação
-  void _handleAction(String action) { 
-    final gameState = Provider.of<GameState>(context, listen: false); 
+  void _handleAction(String action) {
+    final gameState = Provider.of<GameState>(context, listen: false);
 
-    setState(() {
-      switch (action) { 
-        case "Procurar na estante de livros": 
-          currentDialogue = "Você encontrou um livro antigo sobre a história da PUC."; 
-          gameState.completeInteraction('ceaab_bookshelf'); 
-          if (gameState.addClue('Livro de História da PUC')) { 
-            _showClueDiscoveryFeedback('Livro de História da PUC'); 
-          }
-          break;
+  setState((){
+  switch (action) {
+    case "Examinar a obra de arte":
+        currentDialogue = "A obra de arte parece esconder algo por trás dela.";
+        gameState.completeInteraction('ceaab_artwork');
+        if (gameState.addClue('Esconderijo na obra de arte')) {
+          _showClueDiscoveryFeedback('Esconderijo na obra de arte');
+        }
+        break;
+    case "Procurar na estante de livros":
+        currentDialogue = "Você encontrou um livrvo antigo sobre a história da PUC.";
+        gameState.completeInteraction('ceaab_boolshelf');
+        if (gameState.addClue("Livro de história da PUC")) {
+          _showClueDiscoveryFeedback("Livro de história da PUC");
+        }
+        break;
+    case "Verificar os computadores":
+        currentDialogue = "💻 Os computadores estão desligados devido ao apagão, mas você nota um pen-drive deixado em uma das portas USB com arquivos sobre o sistema elétrico!";
+        gameState.completeInteraction('ceaab_computers');
+        if (gameState.addClue("Pen-drive com arquivos criptografados")) {
+          _showClueDiscoveryFeedback("Pen-drive com arquivos criptografados");
+        }
+        break;
+    case "Conversar com a comendadora Edna":
+        currentDialogue = "A comendadora Edna está muito ocupada organizando os papéis.";
+        gameState.completeInteraction('ceaab_comendadora');
+        break;
+    case "Procurar por pistas":
+        currentDialogue = "Você não encontrou nada de novo por enquanto.";
+        gameState.completeInteraction('ceaab_procurar_pistas');
+        break;
 
-        case "Examinar a obra de arte": 
-          currentDialogue = "A obra de arte parece esconder algo por trás dela."; 
-          gameState.completeInteraction('ceaab_artwork'); 
-          if (gameState.addClue('Esconderijo na obra de arte')) {
-            _showClueDiscoveryFeedback('Esconderijo na obra de arte');
-          }
-          break; 
-
-        case "Verificar os computadores": 
-          currentDialogue = "💻 Os computadores estão desligados devido ao apagão, mas você nota um pen-drive deixado em uma das portas USB com arquivos sobre o sistema elétrico!"; 
-          gameState.completeInteraction('ceaab_computers'); 
-          if (gameState.addClue("Pen-drive com arquivos criptografados")) {
-             _showClueDiscoveryFeedback("Pen-drive com arquivos criptografados");
-          }
-          break;
-
-        case "Conversar com a comendadora Edna": 
-          currentDialogue = "A comendadora Edna está muito ocupada organizando os papéis."; 
-          gameState.completeInteraction('ceaab_comendadora'); 
-          break; 
-
-        case "Procurar por pistas": 
-          currentDialogue = "Você não encontrou nada de novo por enquanto."; 
-          gameState.completeInteraction('ceaab_procurar_pistas'); 
-          break; 
-
-        case "Verificar Inventário":
-          currentDialogue = "Você revisa as informações e pistas que já coletou na sua mente.";
-          break;
-      }
-      
-      _verificarProgressoDasPistas(); 
-    });
-  } 
-
+    case "Verificar Inventário":
+        currentDialogue = "Você revisa as informações e pistas que já coletou na sua mente.";
+        break;
+  }
+  // Executa a sua checagem de progresso de pistas original
+  _verificarProgressoDasPistas();
+  });
+  }
   // Filtra quais ações ainda estão disponíveis para não poluir a tela
   List<String> _getAvailableActions(GameState gameState) { 
     List<String> actions = []; 
@@ -310,7 +303,6 @@ class _CeaabScreenState extends State<CeaabScreen> {
     if (!gameState.isInteractionDone('ceaab_computers')) { 
       actions.add("Verificar os computadores"); 
     }
-
     actions.add("Conversar com a comendadora Edna"); 
     actions.add("Procurar por pistas");
     actions.add("Verificar Inventário"); 
